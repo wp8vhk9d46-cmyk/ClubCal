@@ -1,0 +1,3237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
+  <script>
+    const SUPABASE_URL = 'https://edcnllalkavncijrewno.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_TGCM03zUEwuO7ibEXBWNfA_VJt-jHOC';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Club Cal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #0f1b35;
+      --navy-2: #17284d;
+      --coral: #ff5c35;
+      --coral-dark: #e04823;
+      --warm: #fafaf7;
+      --card: #f4f4f0;
+      --line: rgba(15, 27, 53, 0.1);
+      --text: #18233d;
+      --muted: #60708e;
+      --success: #17895b;
+      --success-bg: #e8f7ef;
+      --amber: #fff3cd;
+      --amber-text: #7c5a06;
+      --danger: #b3261e;
+      --danger-bg: #fff2f0;
+      --shadow: 0 20px 50px rgba(15, 27, 53, 0.1);
+      --radius: 16px;
+      --radius-lg: 28px;
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "DM Sans", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255, 92, 53, 0.12), transparent 28%),
+        radial-gradient(circle at top right, rgba(15, 27, 53, 0.08), transparent 30%),
+        linear-gradient(180deg, #fdfcf8 0%, var(--warm) 35%, #f7f7f3 100%);
+      min-height: 100vh;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    img,
+    svg {
+      display: block;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    .shell {
+      min-height: 100vh;
+      position: relative;
+      overflow-x: clip;
+    }
+
+    .container {
+      width: min(var(--max), calc(100vw - 32px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(20px);
+      background: rgba(250, 250, 247, 0.82);
+      border-bottom: 1px solid rgba(15, 27, 53, 0.06);
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 16px 0;
+      position: relative;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--navy);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      z-index: 3;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--coral), #ff8668);
+      color: white;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 14px 30px rgba(255, 92, 53, 0.22);
+    }
+
+    .brand-name {
+      font-size: 1.1rem;
+    }
+
+    .nav-toggle {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      border: 1px solid rgba(15, 27, 53, 0.08);
+      background: rgba(255, 255, 255, 0.82);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 3;
+      box-shadow: 0 12px 24px rgba(15, 27, 53, 0.08);
+    }
+
+    .nav-toggle-lines {
+      width: 20px;
+      height: 14px;
+      position: relative;
+    }
+
+    .nav-toggle-lines span {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      border-radius: 999px;
+      background: var(--navy);
+      transition: transform 200ms ease, opacity 200ms ease, top 200ms ease;
+    }
+
+    .nav-toggle-lines span:nth-child(1) { top: 0; }
+    .nav-toggle-lines span:nth-child(2) { top: 6px; }
+    .nav-toggle-lines span:nth-child(3) { top: 12px; }
+
+    .nav-toggle[aria-expanded="true"] .nav-toggle-lines span:nth-child(1) {
+      top: 6px;
+      transform: rotate(45deg);
+    }
+
+    .nav-toggle[aria-expanded="true"] .nav-toggle-lines span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .nav-toggle[aria-expanded="true"] .nav-toggle-lines span:nth-child(3) {
+      top: 6px;
+      transform: rotate(-45deg);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-link {
+      padding: 11px 15px;
+      border-radius: 999px;
+      color: var(--muted);
+      transition: 180ms ease;
+      font-weight: 600;
+    }
+
+    .nav-link:hover,
+    .nav-link:focus-visible {
+      background: rgba(15, 27, 53, 0.06);
+      color: var(--navy);
+      outline: none;
+    }
+
+    .nav-link.cta {
+      background: var(--navy);
+      color: white;
+    }
+
+    .nav-link.cta:hover,
+    .nav-link.cta:focus-visible {
+      background: var(--navy-2);
+    }
+
+    main {
+      padding: 20px 0 60px;
+    }
+
+    .view {
+      display: none;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 320ms ease, transform 320ms ease;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .view.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hero {
+      padding: 54px 0 28px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+      gap: 32px;
+      align-items: center;
+    }
+
+    .hero-copy {
+      padding: 18px 0;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 92, 53, 0.12);
+      color: var(--coral-dark);
+      font-size: 0.92rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    .hero-title,
+    .section-title,
+    .view h2,
+    .dashboard-title {
+      font-family: "Playfair Display", serif;
+      line-height: 0.98;
+      letter-spacing: -0.03em;
+      margin: 0;
+      color: var(--navy);
+    }
+
+    .hero-title {
+      font-size: clamp(3rem, 7vw, 5.4rem);
+      max-width: 11ch;
+    }
+
+    .hero-copy p,
+    .section-subtitle,
+    .muted {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .hero-copy p {
+      font-size: 1.08rem;
+      margin: 18px 0 22px;
+      max-width: 58ch;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .hero-search-panel,
+    .hero-panel,
+    .card,
+    .panel,
+    .form-shell,
+    .club-card,
+    .preview-card,
+    .event-card,
+    .settings-card,
+    .insights-card {
+      background: rgba(255, 255, 255, 0.76);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-search-panel {
+      padding: 18px;
+      margin-bottom: 20px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(244, 244, 240, 0.94));
+    }
+
+    .hero-search-label {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+
+    .hero-panel {
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+      min-height: 420px;
+      background:
+        linear-gradient(180deg, rgba(15, 27, 53, 0.98), rgba(23, 40, 77, 0.95)),
+        linear-gradient(135deg, rgba(255, 92, 53, 0.25), transparent);
+      color: white;
+    }
+
+    .hero-panel::before,
+    .hero-panel::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+    }
+
+    .hero-panel::before {
+      width: 220px;
+      height: 220px;
+      background: rgba(255, 92, 53, 0.18);
+      top: -70px;
+      right: -40px;
+    }
+
+    .hero-panel::after {
+      width: 130px;
+      height: 130px;
+      background: rgba(255, 255, 255, 0.08);
+      bottom: 40px;
+      left: -30px;
+    }
+
+    .panel-chip {
+      display: inline-flex;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 22px;
+    }
+
+    .hero-panel-title {
+      font-size: 2.4rem;
+      color: white;
+      margin: 0 0 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-panel-copy {
+      color: rgba(255, 255, 255, 0.76);
+      line-height: 1.7;
+      max-width: 28ch;
+      margin: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-stats {
+      display: grid;
+      gap: 14px;
+      position: relative;
+      z-index: 1;
+      margin-top: 28px;
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 14px;
+      align-items: center;
+      padding: 16px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .stat-row strong {
+      font-size: 1.6rem;
+      letter-spacing: -0.04em;
+    }
+
+    .stat-title {
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .stat-copy {
+      color: rgba(255, 255, 255, 0.72);
+    }
+
+    .social-proof {
+      text-align: center;
+      padding: 8px 0 24px;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.8;
+      max-width: 60ch;
+      margin: 0 auto;
+    }
+
+    .section {
+      padding: 30px 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .section-head.compact {
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+    }
+
+    .flow-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .card,
+    .panel,
+    .form-shell,
+    .preview-card,
+    .event-card,
+    .club-card,
+    .settings-card,
+    .insights-card {
+      padding: 24px;
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .card:hover,
+    .club-card:hover,
+    .event-card:hover,
+    .preview-card:hover,
+    .insights-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 26px 50px rgba(15, 27, 53, 0.13);
+    }
+
+    .flow-tag,
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .flow-tag {
+      background: rgba(15, 27, 53, 0.07);
+      color: var(--navy);
+      margin-bottom: 14px;
+    }
+
+    .flow-tag.inverse {
+      background: rgba(255, 255, 255, 0.12);
+      color: white;
+    }
+
+    .card-heading,
+    .preview-heading,
+    .settings-heading,
+    .admin-heading,
+    .event-heading {
+      margin: 0;
+      color: var(--navy);
+    }
+
+    .card-heading,
+    .settings-heading {
+      font-size: 1.45rem;
+    }
+
+    .preview-heading {
+      font-size: 1.55rem;
+    }
+
+    .event-heading {
+      font-size: 1.35rem;
+      margin-bottom: 8px;
+    }
+
+    .card-text-top {
+      margin: 0 0 8px;
+    }
+
+    .helper-row {
+      margin-top: 18px;
+    }
+
+    .helper-link {
+      color: var(--coral-dark);
+      font-weight: 700;
+    }
+
+    .btn {
+      border: 0;
+      cursor: pointer;
+      border-radius: 14px;
+      padding: 15px 18px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: transform 150ms ease, box-shadow 180ms ease, background 180ms ease, color 180ms ease;
+      box-shadow: 0 12px 24px rgba(15, 27, 53, 0.08);
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(255, 92, 53, 0.18);
+    }
+
+    .btn-primary {
+      background: var(--coral);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--coral-dark);
+      box-shadow: 0 18px 36px rgba(255, 92, 53, 0.22);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--navy);
+      border: 1px solid rgba(15, 27, 53, 0.08);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.9);
+      transform: translateY(-1px);
+    }
+
+    .btn-small {
+      padding: 11px 14px;
+      border-radius: 12px;
+      font-size: 0.94rem;
+    }
+
+    .btn-danger {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid rgba(179, 38, 30, 0.12);
+      box-shadow: none;
+    }
+
+    .btn-ghost {
+      background: rgba(15, 27, 53, 0.05);
+      color: var(--navy);
+      box-shadow: none;
+    }
+
+    .btn-danger:focus-visible,
+    .btn-ghost:focus-visible {
+      outline: 2px solid var(--coral);
+      outline-offset: 2px;
+      box-shadow: none;
+    }
+
+    .btn[disabled] {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .split-view,
+    .dashboard-layout {
+      display: grid;
+      gap: 26px;
+    }
+
+    .split-view {
+      grid-template-columns: minmax(0, 0.92fr) minmax(320px, 1.08fr);
+      align-items: start;
+      padding: 36px 0 12px;
+    }
+
+    .intro-panel {
+      padding: 28px;
+      border-radius: var(--radius-lg);
+      background:
+        linear-gradient(160deg, rgba(15, 27, 53, 0.98), rgba(35, 58, 106, 0.94)),
+        linear-gradient(120deg, rgba(255, 92, 53, 0.15), transparent);
+      color: white;
+      min-height: 100%;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .intro-panel h2 {
+      color: white;
+      font-size: clamp(2.1rem, 4vw, 3.2rem);
+      margin: 0 0 14px;
+    }
+
+    .intro-panel p {
+      color: rgba(255, 255, 255, 0.78);
+      line-height: 1.7;
+      max-width: 36ch;
+      margin: 0;
+    }
+
+    .intro-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .intro-item {
+      padding: 15px 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .form-shell h2,
+    .panel h2,
+    .dashboard-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin-bottom: 10px;
+    }
+
+    .form {
+      display: grid;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .field,
+    .field-row {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    label {
+      font-weight: 700;
+      color: var(--navy);
+      font-size: 0.95rem;
+    }
+
+    .label-note {
+      color: var(--muted);
+      font-weight: 500;
+      margin-left: 6px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid rgba(15, 27, 53, 0.12);
+      border-radius: 14px;
+      padding: 14px 15px;
+      background: #fff;
+      color: var(--text);
+      transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+    }
+
+    textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: rgba(255, 92, 53, 0.8);
+      transform: translateY(-1px);
+    }
+
+    .error {
+      font-size: 0.85rem;
+      color: var(--danger);
+      min-height: 1em;
+    }
+
+    .notice {
+      border-radius: 18px;
+      padding: 16px 18px;
+      background: var(--amber);
+      color: var(--amber-text);
+      border: 1px solid rgba(124, 90, 6, 0.12);
+      border-left: 5px solid #f4c046;
+      line-height: 1.65;
+    }
+
+    .config-notice {
+      background: rgba(15, 27, 53, 0.06);
+      border-left-color: var(--navy);
+      color: var(--navy);
+    }
+
+    .success-panel {
+      display: none;
+      margin-top: 22px;
+      padding: 28px;
+      border-radius: 20px;
+      background: var(--success-bg);
+      border: 1px solid rgba(23, 137, 91, 0.16);
+      text-align: center;
+    }
+
+    .success-panel.visible {
+      display: block;
+      animation: fadeUp 320ms ease;
+    }
+
+    .checkmark-wrap {
+      width: 78px;
+      height: 78px;
+      margin: 0 auto 16px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: rgba(23, 137, 91, 0.1);
+    }
+
+    .checkmark circle,
+    .checkmark path {
+      stroke: var(--success);
+      stroke-width: 5;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 120;
+      stroke-dashoffset: 120;
+      animation: drawCheck 900ms ease forwards;
+    }
+
+    .checkmark path {
+      animation-delay: 180ms;
+    }
+
+    .success-title {
+      margin: 0 0 8px;
+      color: var(--success);
+    }
+
+    .success-copy {
+      margin: 0 0 10px;
+    }
+
+    .dashboard-layout {
+      grid-template-columns: 1fr;
+      padding: 22px 0;
+    }
+
+    .dashboard-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .dashboard-subtitle {
+      margin: 10px 0 0;
+    }
+
+    .badge {
+      min-height: 34px;
+    }
+
+    .badge.pending {
+      background: var(--amber);
+      color: var(--amber-text);
+    }
+
+    .badge.active {
+      background: rgba(23, 137, 91, 0.12);
+      color: var(--success);
+    }
+
+    .badge.stale {
+      background: rgba(15, 27, 53, 0.08);
+      color: var(--muted);
+    }
+
+    .dashboard-tabs {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 22px;
+      position: relative;
+      flex-wrap: wrap;
+      border-bottom: 1px solid rgba(15, 27, 53, 0.08);
+      padding-bottom: 10px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      color: var(--muted);
+      border: 0;
+      padding: 10px 6px;
+      font-weight: 800;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .tab-btn.active {
+      color: var(--navy);
+    }
+
+    .tab-btn.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -11px;
+      height: 3px;
+      border-radius: 999px;
+      background: var(--coral);
+      animation: tabSlide 240ms ease;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+      animation: fadeUp 240ms ease;
+    }
+
+    .create-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .preview-meta,
+    .event-meta,
+    .club-meta,
+    .settings-meta {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .meta-line {
+      display: flex;
+      gap: 10px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .meta-line strong {
+      color: var(--navy);
+      min-width: 98px;
+      font-size: 0.93rem;
+    }
+
+    .calendar-pulse {
+      animation: pulse 420ms ease;
+    }
+
+    .event-grid,
+    .club-grid,
+    .insights-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .club-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .event-actions,
+    .club-actions,
+    .settings-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .empty-state {
+      padding: 30px 24px;
+      border-radius: 18px;
+      background: rgba(15, 27, 53, 0.04);
+      border: 1px dashed rgba(15, 27, 53, 0.12);
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .settings-card dl {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 14px 18px;
+      margin: 18px 0 24px;
+    }
+
+    .settings-card dt {
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    .settings-card dd {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .settings-form[hidden] {
+      display: none !important;
+    }
+
+    .discovery-layout {
+      padding: 22px 0;
+      display: grid;
+      gap: 20px;
+    }
+
+    .search-shell {
+      position: relative;
+    }
+
+    .search-input {
+      padding-right: 44px;
+      height: 58px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.88);
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    .suggestions {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: calc(100% + 10px);
+      background: white;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      box-shadow: 0 22px 40px rgba(15, 27, 53, 0.12);
+      overflow: hidden;
+      display: none;
+      z-index: 20;
+    }
+
+    .suggestions.visible {
+      display: block;
+      animation: fadeUp 180ms ease;
+    }
+
+    .suggestion {
+      width: 100%;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      text-align: left;
+      padding: 14px 16px;
+      color: var(--text);
+      transition: background 160ms ease;
+    }
+
+    .suggestion:hover,
+    .suggestion:focus-visible {
+      background: rgba(15, 27, 53, 0.05);
+      outline: none;
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .filter-chip {
+      border: 1px solid rgba(15, 27, 53, 0.08);
+      background: rgba(255, 255, 255, 0.82);
+      color: var(--muted);
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 700;
+      box-shadow: none;
+    }
+
+    .filter-chip.active {
+      background: var(--navy);
+      color: white;
+      border-color: var(--navy);
+    }
+
+    .club-card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(244, 244, 240, 0.95));
+    }
+
+    .club-top {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .club-count {
+      color: var(--muted);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .club-card p {
+      color: var(--muted);
+      line-height: 1.65;
+      margin: 0 0 16px;
+    }
+
+    .event-preview {
+      padding: 14px 15px;
+      border-radius: 16px;
+      background: rgba(15, 27, 53, 0.05);
+      border: 1px solid rgba(15, 27, 53, 0.06);
+      margin-bottom: 12px;
+    }
+
+    .event-preview-title {
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+
+    .event-preview-copy {
+      color: var(--muted);
+    }
+
+    .club-events-expanded {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .mini-event {
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.74);
+      border: 1px solid rgba(15, 27, 53, 0.08);
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .mini-event-title {
+      display: block;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+
+    .last-updated {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-top: 10px;
+    }
+
+    .stale-indicator {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .insights-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-bottom: 20px;
+    }
+
+    .insight-number {
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--navy);
+      margin: 0 0 8px;
+    }
+
+    .bar-chart {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 14px;
+      align-items: end;
+      min-height: 240px;
+      margin-top: 20px;
+    }
+
+    .bar-group {
+      display: grid;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .bar-track {
+      height: 180px;
+      border-radius: 18px;
+      background: rgba(15, 27, 53, 0.06);
+      border: 1px solid rgba(15, 27, 53, 0.08);
+      display: flex;
+      align-items: end;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      width: 100%;
+      background: linear-gradient(180deg, var(--coral), var(--coral-dark));
+      border-radius: 18px 18px 0 0;
+      height: 0;
+      transition: height 240ms ease;
+    }
+
+    .bar-label {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .bar-value {
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    .loading-state {
+      color: var(--muted);
+      text-align: center;
+      padding: 28px 12px;
+    }
+
+    .toast-region {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 60;
+      display: grid;
+      gap: 10px;
+      width: min(360px, calc(100vw - 24px));
+    }
+
+    .toast {
+      background: rgba(15, 27, 53, 0.96);
+      color: white;
+      border-radius: 18px;
+      padding: 14px 16px;
+      box-shadow: 0 24px 50px rgba(15, 27, 53, 0.24);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      animation: toastIn 260ms ease, toastOut 260ms ease 3.2s forwards;
+    }
+
+    .toast strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .site-footer {
+      border-top: 1px solid rgba(15, 27, 53, 0.08);
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(12px);
+      margin-top: 30px;
+    }
+
+    .site-footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 22px 0 28px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .footer-link {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .footer-link:hover,
+    .footer-link:focus-visible {
+      color: var(--navy);
+      outline: none;
+    }
+
+    .category-social {
+      background: rgba(255, 92, 53, 0.12);
+      color: var(--coral-dark);
+    }
+
+    .category-academic {
+      background: rgba(15, 27, 53, 0.1);
+      color: var(--navy);
+    }
+
+    .category-sports {
+      background: rgba(7, 121, 94, 0.14);
+      color: #0f7054;
+    }
+
+    .category-arts {
+      background: rgba(138, 88, 255, 0.12);
+      color: #6442c7;
+    }
+
+    .category-volunteer {
+      background: rgba(247, 186, 47, 0.2);
+      color: #8a6400;
+    }
+
+    .category-meeting,
+    .category-other {
+      background: rgba(96, 112, 142, 0.14);
+      color: #50617d;
+    }
+
+    .animate-sequence {
+      opacity: 0;
+      transform: translateY(16px);
+      animation: fadeUp 700ms ease forwards;
+    }
+
+    .delay-1 { animation-delay: 80ms; }
+    .delay-2 { animation-delay: 180ms; }
+    .delay-3 { animation-delay: 280ms; }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes drawCheck {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes toastOut {
+      to {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+    }
+
+    @keyframes tabSlide {
+      from {
+        transform: scaleX(0.4);
+        opacity: 0;
+      }
+      to {
+        transform: scaleX(1);
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 1080px) {
+      .split-view,
+      .create-grid,
+      .club-grid,
+      .flow-grid,
+      .insights-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-title {
+        max-width: 12ch;
+      }
+
+      .hero-panel {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-toggle {
+        display: inline-flex;
+      }
+
+      .nav-links {
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 0;
+        right: 0;
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 14px;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.94);
+        border: 1px solid rgba(15, 27, 53, 0.08);
+        box-shadow: 0 18px 36px rgba(15, 27, 53, 0.12);
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .nav-link,
+      .nav-link.cta {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .topbar-inner,
+      .dashboard-head,
+      .section-head {
+        align-items: start;
+      }
+
+      .field-row {
+        grid-template-columns: 1fr;
+      }
+
+      .settings-card dl {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+
+      .hero {
+        padding-top: 32px;
+      }
+
+      .panel,
+      .form-shell,
+      .preview-card,
+      .event-card,
+      .club-card,
+      .intro-panel,
+      .hero-panel,
+      .hero-search-panel,
+      .settings-card,
+      .insights-card {
+        padding: 20px;
+      }
+
+      .site-footer-inner {
+        align-items: start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="container topbar-inner">
+        <a href="#" class="brand" data-route="landing" aria-label="Club Cal home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <rect x="3.5" y="5.5" width="17" height="15" rx="3" stroke="white" stroke-width="2"></rect>
+              <path d="M7 3.5V7.5M17 3.5V7.5M3.5 10.5H20.5" stroke="white" stroke-width="2" stroke-linecap="round"></path>
+            </svg>
+          </span>
+          <span class="brand-name">Club Cal</span>
+        </a>
+
+        <button id="nav-toggle" class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">
+          <span class="nav-toggle-lines" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+
+        <nav id="nav-links" class="nav-links" aria-label="Primary">
+          <a class="nav-link" href="#" data-route="signup">For Clubs</a>
+          <a class="nav-link" href="#" data-route="discovery">Find Events</a>
+          <a class="nav-link" href="#" data-route="signin">Sign In</a>
+          <a class="nav-link cta" href="#" data-route="signup">Sign Up</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <section id="view-landing" class="view active visible" data-view="landing">
+        <div class="hero">
+          <div class="hero-copy">
+            <div class="hero-search-panel animate-sequence">
+              <div class="hero-search-label">Start with your school</div>
+              <div class="search-shell">
+                <input id="landing-school-search" class="search-input" type="text" placeholder="Search your school or university..." autocomplete="off" aria-autocomplete="list" aria-expanded="false">
+                <div class="search-icon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"></circle>
+                    <path d="M20 20L17 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                  </svg>
+                </div>
+                <div id="landing-suggestions" class="suggestions" role="listbox"></div>
+              </div>
+            </div>
+            <div class="eyebrow animate-sequence delay-1">Verified campus clubs only</div>
+            <h1 class="hero-title animate-sequence delay-1">Find your people before you even arrive.</h1>
+            <p class="animate-sequence delay-2">Club Cal helps incoming freshmen and current students browse real clubs, discover upcoming events, and add them straight to their calendars without creating an account.</p>
+            <div class="hero-actions animate-sequence delay-3">
+              <button class="btn btn-primary" data-route="discovery">Browse Active Clubs</button>
+              <button class="btn btn-secondary" data-route="signup">Register Your Club</button>
+            </div>
+          </div>
+
+          <aside class="hero-panel">
+            <div class="panel-chip">Discovery first</div>
+            <h2 class="hero-panel-title">From move-in week to finals, keep the calendar honest.</h2>
+            <p class="hero-panel-copy">Students can scout what’s happening at their school before they ever step on campus. Clubs get a trustworthy home for events and a better signal of real attendance intent.</p>
+            <div class="hero-stats">
+              <div class="stat-row">
+                <strong>1 tap</strong>
+                <div>
+                  <div class="stat-title">Add to calendar</div>
+                  <div class="stat-copy">Download an `.ics` file that lands in the tools students already use.</div>
+                </div>
+              </div>
+              <div class="stat-row">
+                <strong>Freshman</strong>
+                <div>
+                  <div class="stat-title">Friendly browsing</div>
+                  <div class="stat-copy">Search your future school first, then figure out where you fit.</div>
+                </div>
+              </div>
+              <div class="stat-row">
+                <strong>Proof</strong>
+                <div>
+                  <div class="stat-title">Club insights</div>
+                  <div class="stat-copy">Presidents can show advisors actual calendar reach, not just likes.</div>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <section class="social-proof">
+          Built by an NYU student who was tired of missing events. Starting with NYU — coming to your school next.
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <div>
+              <h2 class="section-title">How It Works</h2>
+              <p class="section-subtitle">Students get a cleaner campus browse experience. Clubs get one place to publish events and measure calendar reach.</p>
+            </div>
+          </div>
+          <div class="flow-grid">
+            <article class="card">
+              <div class="flow-tag">For Clubs</div>
+              <h3 class="card-heading">Publish once, stay discoverable.</h3>
+              <div class="event-meta">
+                <div class="meta-line"><strong>1</strong><span>Register with your school and wait for review.</span></div>
+                <div class="meta-line"><strong>2</strong><span>Create events with the essentials and optional details when you have them.</span></div>
+                <div class="meta-line"><strong>3</strong><span>Track calendar downloads to show advisors your club’s reach.</span></div>
+              </div>
+            </article>
+            <article class="card">
+              <div class="flow-tag">For Students</div>
+              <h3 class="card-heading">Browse before you land on campus.</h3>
+              <div class="event-meta">
+                <div class="meta-line"><strong>1</strong><span>Search your school and see active clubs immediately.</span></div>
+                <div class="meta-line"><strong>2</strong><span>Filter by category and check which clubs have posted recently.</span></div>
+                <div class="meta-line"><strong>3</strong><span>Download the next event to your calendar without making an account.</span></div>
+              </div>
+            </article>
+          </div>
+        </section>
+      </section>
+
+      <section id="view-signup" class="view" data-view="signup">
+        <div class="split-view">
+          <aside class="intro-panel">
+            <div class="flow-tag inverse">Club Registration</div>
+            <h2>Bring your club into the calendar students actually use.</h2>
+            <p>Create your Club Cal presence, go through manual verification, and start publishing events students can save in a click.</p>
+            <div class="intro-list">
+              <div class="intro-item"><strong>Trusted publishing</strong><br>Every club is reviewed before activation.</div>
+              <div class="intro-item"><strong>Proof of reach</strong><br>Track how many students actually save your events.</div>
+              <div class="intro-item"><strong>Cleaner workflow</strong><br>One dashboard for event creation, updates, and insights.</div>
+            </div>
+          </aside>
+
+          <div class="form-shell">
+            <h2>Register your club</h2>
+            <p class="muted">Create a real club account with Supabase Auth. Your club status starts as pending until reviewed.</p>
+            <div id="supabase-config-signup" class="notice config-notice" hidden>
+              Add your Supabase URL and anon key in the script config block before using sign up or sign in.
+            </div>
+            <form id="signup-form" class="form" novalidate>
+              <div class="field">
+                <label for="signup-club-name">Club Name</label>
+                <input id="signup-club-name" name="clubName" type="text" autocomplete="organization">
+                <div class="error" data-error-for="clubName"></div>
+              </div>
+              <div class="field">
+                <label for="signup-school">University / School</label>
+                <div class="search-shell">
+                  <input id="signup-school" class="search-input" name="school" type="text" autocomplete="off" aria-autocomplete="list" aria-expanded="false" placeholder="Start typing your school name...">
+                  <div id="signup-school-suggestions" class="suggestions" role="listbox"></div>
+                </div>
+                <div class="error" data-error-for="school"></div>
+              </div>
+              <div class="field">
+                <label for="signup-email">Email Address</label>
+                <input id="signup-email" name="email" type="email" autocomplete="email">
+                <div class="error" data-error-for="email"></div>
+              </div>
+              <div class="field">
+                <label for="signup-password">Password</label>
+                <input id="signup-password" name="password" type="password" minlength="8" autocomplete="new-password">
+                <div class="error" data-error-for="password"></div>
+              </div>
+              <div class="notice">Your registration will be reviewed before your account is activated. We manually verify all clubs to ensure only real, legitimate organizations can post events. You'll receive a confirmation email once approved.</div>
+              <button class="btn btn-primary" type="submit">Submit for Review</button>
+            </form>
+            <div id="signup-success" class="success-panel" aria-live="polite">
+              <div class="checkmark-wrap">
+                <svg class="checkmark" width="48" height="48" viewBox="0 0 52 52" aria-hidden="true">
+                  <circle cx="26" cy="26" r="22"></circle>
+                  <path d="M16 27L23 34L36 19"></path>
+                </svg>
+              </div>
+              <h3 class="success-title">Application submitted!</h3>
+              <p id="signup-success-text" class="muted success-copy"></p>
+              <a href="#" class="helper-link" data-route="landing">Back to home</a>
+            </div>
+            <p class="helper-row"><a class="helper-link" href="#" data-route="signin">Already approved? Sign in →</a></p>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-signin" class="view" data-view="signin">
+        <div class="split-view">
+          <aside class="intro-panel">
+            <div class="flow-tag inverse">Club Access</div>
+            <h2>Sign in with your real club account.</h2>
+            <p>Club Cal now uses Supabase Auth for email and password sign-in. Pending clubs can sign in to manage drafts, while active clubs appear fully approved.</p>
+          </aside>
+
+          <div class="form-shell">
+            <h2>Sign in</h2>
+            <p class="muted">Use the same email and password you used during registration.</p>
+            <div id="supabase-config-signin" class="notice config-notice" hidden>
+              Add your Supabase URL and anon key in the script config block before using sign up or sign in.
+            </div>
+            <form id="signin-form" class="form" novalidate>
+              <div class="field">
+                <label for="signin-email">Email Address</label>
+                <input id="signin-email" name="email" type="email" autocomplete="email">
+                <div class="error" data-error-for="signinEmail"></div>
+              </div>
+              <div class="field">
+                <label for="signin-password">Password</label>
+                <input id="signin-password" name="password" type="password" autocomplete="current-password">
+                <div class="error" data-error-for="signinPassword"></div>
+              </div>
+              <button class="btn btn-primary" type="submit">Sign In</button>
+            </form>
+            <p class="helper-row"><a class="helper-link" href="#" data-route="signup">New club? Register here →</a></p>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-dashboard" class="view" data-view="dashboard">
+        <div class="dashboard-layout">
+          <div class="dashboard-head">
+            <div>
+              <h2 class="dashboard-title" id="dashboard-title">Welcome back, Club</h2>
+              <p class="muted dashboard-subtitle">Create events, measure calendar reach, and keep your club profile current.</p>
+            </div>
+            <div id="account-badge" class="badge pending">Pending</div>
+          </div>
+
+          <div class="panel">
+            <div class="dashboard-tabs" role="tablist" aria-label="Club dashboard tabs">
+              <button class="tab-btn active" type="button" data-tab="events">My Events</button>
+              <button class="tab-btn" type="button" data-tab="create">Create Event</button>
+              <button class="tab-btn" type="button" data-tab="insights">Insights</button>
+              <button class="tab-btn" type="button" data-tab="settings">Settings</button>
+            </div>
+
+            <section class="tab-panel active" data-tab-panel="events">
+              <div id="events-list" class="event-grid"></div>
+            </section>
+
+            <section class="tab-panel" data-tab-panel="create">
+              <div class="create-grid">
+                <form id="event-form" class="form" novalidate>
+                  <div class="field">
+                    <label for="event-title">Event Title</label>
+                    <input id="event-title" name="title" type="text">
+                    <div class="error" data-error-for="title"></div>
+                  </div>
+                  <div class="field">
+                    <label for="event-date">Date</label>
+                    <input id="event-date" name="date" type="date">
+                    <div class="error" data-error-for="date"></div>
+                  </div>
+                  <div class="field-row">
+                    <div class="field">
+                      <label for="event-start-time">Start Time</label>
+                      <input id="event-start-time" name="startTime" type="time">
+                      <div class="error" data-error-for="startTime"></div>
+                    </div>
+                    <div class="field">
+                      <label for="event-end-time">End Time</label>
+                      <input id="event-end-time" name="endTime" type="time">
+                      <div class="error" data-error-for="endTime"></div>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label for="event-address">Location / Address</label>
+                    <input id="event-address" name="address" type="text">
+                    <div class="error" data-error-for="address"></div>
+                  </div>
+                  <div class="field">
+                    <label for="event-room">Room / Building <span class="label-note">(optional)</span></label>
+                    <input id="event-room" name="room" type="text">
+                    <div class="error" data-error-for="room"></div>
+                  </div>
+                  <div class="field-row">
+                    <div class="field">
+                      <label for="event-attire">Attire <span class="label-note">(optional)</span></label>
+                      <select id="event-attire" name="attire">
+                        <option value="">Select attire</option>
+                        <option>Casual</option>
+                        <option>Business Casual</option>
+                        <option>Formal</option>
+                        <option>Costume/Themed</option>
+                        <option>Athletic</option>
+                        <option>No Dress Code</option>
+                      </select>
+                      <div class="error" data-error-for="attire"></div>
+                    </div>
+                    <div class="field">
+                      <label for="event-category">Event Category</label>
+                      <select id="event-category" name="category">
+                        <option value="">Select category</option>
+                        <option>Social</option>
+                        <option>Academic</option>
+                        <option>Sports</option>
+                        <option>Arts</option>
+                        <option>Volunteer</option>
+                        <option>Meeting</option>
+                        <option>Other</option>
+                      </select>
+                      <div class="error" data-error-for="category"></div>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label for="event-description">Description / Additional Details <span class="label-note">(optional)</span></label>
+                    <textarea id="event-description" name="description"></textarea>
+                    <div class="error" data-error-for="description"></div>
+                  </div>
+                  <div class="field">
+                    <label for="event-rsvp">RSVP Link <span class="label-note">(optional)</span></label>
+                    <input id="event-rsvp" name="rsvp" type="url" placeholder="https://">
+                    <div class="error" data-error-for="rsvp"></div>
+                  </div>
+                  <button class="btn btn-primary" type="submit" id="create-event-submit">Create & Download .ics</button>
+                </form>
+
+                <aside class="preview-card">
+                  <div class="flow-tag">Live Preview</div>
+                  <h3 id="preview-title" class="preview-heading">Your event title</h3>
+                  <p id="preview-description" class="muted preview-copy">Details, dress code, and RSVP info will appear here as students browse your club.</p>
+                  <div class="preview-meta">
+                    <div class="meta-line"><strong>When</strong><span id="preview-datetime">Select a date and time.</span></div>
+                    <div class="meta-line"><strong>Where</strong><span id="preview-location">Add an address and room/building.</span></div>
+                    <div class="meta-line"><strong>Attire</strong><span id="preview-attire">Optional attire note.</span></div>
+                    <div class="meta-line"><strong>Category</strong><span id="preview-category">Pick a category for discovery.</span></div>
+                    <div class="meta-line"><strong>RSVP</strong><span id="preview-rsvp">Optional RSVP link appears here.</span></div>
+                  </div>
+                </aside>
+              </div>
+            </section>
+
+            <section class="tab-panel" data-tab-panel="insights">
+              <div class="insights-grid">
+                <article class="insights-card">
+                  <div class="flow-tag">Total Reach</div>
+                  <p id="insights-total-downloads" class="insight-number">0</p>
+                  <p class="muted">Calendar downloads across all events.</p>
+                </article>
+                <article class="insights-card">
+                  <div class="flow-tag">Published Events</div>
+                  <p id="insights-event-count" class="insight-number">0</p>
+                  <p class="muted">Events currently in your dashboard.</p>
+                </article>
+                <article class="insights-card">
+                  <div class="flow-tag">Top Event</div>
+                  <p id="insights-top-downloads" class="insight-number">0</p>
+                  <p id="insights-top-event-label" class="muted">No event downloads yet.</p>
+                </article>
+              </div>
+              <div class="panel">
+                <h3 class="settings-heading">Downloads by Event</h3>
+                <p class="muted">Use this to show advisors which events actually made it onto student calendars.</p>
+                <div id="insights-chart" class="bar-chart"></div>
+              </div>
+            </section>
+
+            <section class="tab-panel" data-tab-panel="settings">
+              <div class="settings-card">
+                <div class="dashboard-head">
+                  <div>
+                    <h3 class="settings-heading">Club Settings</h3>
+                    <p class="muted">Update your club name and school without leaving the dashboard.</p>
+                  </div>
+                  <button id="settings-edit-btn" class="btn btn-secondary btn-small" type="button">Edit</button>
+                </div>
+
+                <div id="settings-read-view">
+                  <dl>
+                    <dt>Club Name</dt>
+                    <dd id="settings-club-name">-</dd>
+                    <dt>University / School</dt>
+                    <dd id="settings-school">-</dd>
+                    <dt>Email Address</dt>
+                    <dd id="settings-email">-</dd>
+                  </dl>
+                </div>
+
+                <form id="settings-form" class="form settings-form" hidden novalidate>
+                  <div class="field">
+                    <label for="settings-club-name-input">Club Name</label>
+                    <input id="settings-club-name-input" name="clubName" type="text">
+                    <div class="error" data-error-for="settingsClubName"></div>
+                  </div>
+                  <div class="field">
+                    <label for="settings-school-input">University / School</label>
+                    <input id="settings-school-input" name="school" type="text">
+                    <div class="error" data-error-for="settingsSchool"></div>
+                  </div>
+                  <div class="field">
+                    <label for="settings-email-input">Email Address</label>
+                    <input id="settings-email-input" name="email" type="email" readonly>
+                  </div>
+                  <div class="settings-actions">
+                    <button class="btn btn-primary" type="submit">Save Changes</button>
+                    <button id="settings-cancel-btn" class="btn btn-ghost" type="button">Cancel</button>
+                  </div>
+                </form>
+
+                <div class="settings-actions">
+                  <button id="signout-btn" class="btn btn-secondary" type="button">Sign Out</button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-discovery" class="view" data-view="discovery">
+        <div class="discovery-layout">
+          <div class="panel">
+            <div class="section-head compact">
+              <div>
+                <h2>Find campus events</h2>
+                <p class="section-subtitle">Search your school, filter by category, and save the events that matter before the semester even starts.</p>
+              </div>
+            </div>
+            <div class="search-shell">
+              <input id="school-search" class="search-input" type="text" placeholder="Search your school or university..." autocomplete="off" aria-autocomplete="list" aria-expanded="false">
+              <div class="search-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"></circle>
+                  <path d="M20 20L17 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                </svg>
+              </div>
+              <div id="suggestions" class="suggestions" role="listbox"></div>
+            </div>
+          </div>
+
+          <div id="discovery-results" hidden>
+            <div class="section-head compact">
+              <div>
+                <h2 id="selected-school-title">School Events</h2>
+                <p class="section-subtitle">Browse active clubs, spot stale listings, and add the next event right to your calendar.</p>
+              </div>
+            </div>
+            <div id="filter-bar" class="filter-bar">
+              <button class="filter-chip active" type="button" data-filter="All">All</button>
+              <button class="filter-chip" type="button" data-filter="Social">Social</button>
+              <button class="filter-chip" type="button" data-filter="Academic">Academic</button>
+              <button class="filter-chip" type="button" data-filter="Sports">Sports</button>
+              <button class="filter-chip" type="button" data-filter="Arts">Arts</button>
+              <button class="filter-chip" type="button" data-filter="Volunteer">Volunteer</button>
+            </div>
+            <div id="club-grid" class="club-grid section"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-admin" class="view" data-view="admin">
+        <div class="dashboard-layout">
+          <div class="dashboard-head">
+            <div>
+              <h2 class="dashboard-title">Club Review Admin</h2>
+              <p class="muted dashboard-subtitle">Pending clubs come directly from Supabase. Admin access lasts for this tab session only.</p>
+            </div>
+          </div>
+          <div class="panel">
+            <div id="admin-list" class="event-grid"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container site-footer-inner">
+        <a href="#" class="brand" data-route="landing" aria-label="Club Cal home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <rect x="3.5" y="5.5" width="17" height="15" rx="3" stroke="white" stroke-width="2"></rect>
+              <path d="M7 3.5V7.5M17 3.5V7.5M3.5 10.5H20.5" stroke="white" stroke-width="2" stroke-linecap="round"></path>
+            </svg>
+          </span>
+          <span class="brand-name">Club Cal</span>
+        </a>
+        <nav class="footer-links" aria-label="Footer">
+          <a class="footer-link" href="#" data-route="signup">For Clubs</a>
+          <a class="footer-link" href="#" data-route="discovery">Find Events</a>
+          <a class="footer-link" href="mailto:hello@clubcal.app">Contact</a>
+        </nav>
+      </div>
+    </footer>
+
+    <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+  </div>
+
+  <script>
+    (() => {
+      const ADMIN_PASSWORD = "clubcal-admin";
+
+      /*
+        Suggested SQL setup in Supabase:
+
+        create table if not exists clubs (
+          id bigint generated by default as identity primary key,
+          club_name text not null,
+          school text not null,
+          email text unique not null,
+          password_hash text not null default 'managed_by_supabase_auth',
+          status text not null default 'pending' check (status in ('pending', 'active')),
+          created_at timestamptz not null default now()
+        );
+
+        create table if not exists events (
+          id bigint generated by default as identity primary key,
+          club_id bigint not null references clubs(id) on delete cascade,
+          title text not null,
+          date date not null,
+          start_time time not null,
+          end_time time not null,
+          address text not null,
+          room text,
+          attire text,
+          category text not null,
+          description text,
+          rsvp_url text,
+          created_at timestamptz not null default now(),
+          download_count integer not null default 0
+        );
+      */
+
+      const STORAGE_KEYS = {
+        lastViewedSchool: "clubcal_last_viewed_school",
+        studentPrompt: "clubcal_student_prompt",
+        authSession: "clubcal_auth_session",
+        adminSession: "clubcal_admin_session"
+      };
+
+      const schoolData = {};
+      const schoolList = [
+        "UCLA",
+        "NYU",
+        "University of Michigan",
+        "Stanford University",
+        "Boston University",
+        "Columbia University",
+        "Westview High School",
+        "Lincoln High School",
+        "Jefferson Academy",
+        "Riverside Community College"
+      ];
+
+      const views = [...document.querySelectorAll("[data-view]")];
+      const routeTriggers = [...document.querySelectorAll("[data-route]")];
+      const tabButtons = [...document.querySelectorAll(".tab-btn")];
+      const tabPanels = [...document.querySelectorAll(".tab-panel")];
+      const navToggle = document.getElementById("nav-toggle");
+      const navLinks = document.getElementById("nav-links");
+      const toastRegion = document.getElementById("toast-region");
+
+      const landingSchoolInput = document.getElementById("landing-school-search");
+      const landingSuggestions = document.getElementById("landing-suggestions");
+      const schoolSearchInput = document.getElementById("school-search");
+      const suggestionsEl = document.getElementById("suggestions");
+      const signupSchoolInput = document.getElementById("signup-school");
+      const signupSchoolSuggestions = document.getElementById("signup-school-suggestions");
+
+      const discoveryResults = document.getElementById("discovery-results");
+      const selectedSchoolTitle = document.getElementById("selected-school-title");
+      const clubGrid = document.getElementById("club-grid");
+      const filterBar = document.getElementById("filter-bar");
+
+      const signupForm = document.getElementById("signup-form");
+      const signinForm = document.getElementById("signin-form");
+      const eventForm = document.getElementById("event-form");
+      const settingsForm = document.getElementById("settings-form");
+      const settingsReadView = document.getElementById("settings-read-view");
+      const settingsEditBtn = document.getElementById("settings-edit-btn");
+      const settingsCancelBtn = document.getElementById("settings-cancel-btn");
+      const signoutBtn = document.getElementById("signout-btn");
+      const signupSuccess = document.getElementById("signup-success");
+      const signupSuccessText = document.getElementById("signup-success-text");
+
+      const supabaseConfigSignup = document.getElementById("supabase-config-signup");
+      const supabaseConfigSignin = document.getElementById("supabase-config-signin");
+
+      const eventsList = document.getElementById("events-list");
+      const insightsChart = document.getElementById("insights-chart");
+      const insightsTotalDownloads = document.getElementById("insights-total-downloads");
+      const insightsEventCount = document.getElementById("insights-event-count");
+      const insightsTopDownloads = document.getElementById("insights-top-downloads");
+      const insightsTopEventLabel = document.getElementById("insights-top-event-label");
+
+      const adminList = document.getElementById("admin-list");
+      const dashboardTitle = document.getElementById("dashboard-title");
+      const accountBadge = document.getElementById("account-badge");
+      const settingsClubName = document.getElementById("settings-club-name");
+      const settingsSchool = document.getElementById("settings-school");
+      const settingsEmail = document.getElementById("settings-email");
+      const settingsClubNameInput = document.getElementById("settings-club-name-input");
+      const settingsSchoolInput = document.getElementById("settings-school-input");
+      const settingsEmailInput = document.getElementById("settings-email-input");
+      const createEventSubmit = document.getElementById("create-event-submit");
+
+      const previewRefs = {
+        title: document.getElementById("preview-title"),
+        description: document.getElementById("preview-description"),
+        datetime: document.getElementById("preview-datetime"),
+        location: document.getElementById("preview-location"),
+        attire: document.getElementById("preview-attire"),
+        category: document.getElementById("preview-category"),
+        rsvp: document.getElementById("preview-rsvp")
+      };
+
+      const state = {
+        currentView: "landing",
+        currentTab: "events",
+        currentSchool: localStorage.getItem(STORAGE_KEYS.lastViewedSchool) || "",
+        currentFilter: "All",
+        currentClubRows: [],
+        currentDiscoveryData: [],
+        activeClub: null,
+        authSession: null,
+        dashboardEvents: [],
+        dashboardStatus: ""
+      };
+
+      function isSupabaseConfigured() {
+        return SUPABASE_URL.startsWith("https://") && !SUPABASE_URL.includes("YOUR_PROJECT") && SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.includes("YOUR_SUPABASE");
+      }
+
+      function loadSession(key) {
+        try {
+          const raw = sessionStorage.getItem(key);
+          return raw ? JSON.parse(raw) : null;
+        } catch (error) {
+          return null;
+        }
+      }
+
+      function saveSession(key, value) {
+        if (!value) {
+          sessionStorage.removeItem(key);
+          return;
+        }
+        sessionStorage.setItem(key, JSON.stringify(value));
+      }
+
+      function escapeICS(text) {
+        return String(text || "")
+          .replace(/\\/g, "\\\\")
+          .replace(/\n/g, "\\n")
+          .replace(/,/g, "\\,")
+          .replace(/;/g, "\\;");
+      }
+
+      function escapeHTML(value) {
+        return String(value ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function showToast(title, message) {
+        const toast = document.createElement("div");
+        toast.className = "toast";
+        toast.innerHTML = `<strong>${escapeHTML(title)}</strong><span>${escapeHTML(message)}</span>`;
+        toastRegion.appendChild(toast);
+        setTimeout(() => toast.remove(), 3600);
+      }
+
+      function clearErrors(scope) {
+        scope.querySelectorAll("[data-error-for]").forEach((el) => {
+          el.textContent = "";
+        });
+      }
+
+      function setError(scope, key, message) {
+        const el = scope.querySelector(`[data-error-for="${key}"]`);
+        if (el) el.textContent = message;
+      }
+
+      function formatLocalDate(dateString) {
+        if (!dateString) return "TBD";
+        const date = new Date(dateString);
+        return new Intl.DateTimeFormat("en-US", {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+          year: "numeric"
+        }).format(date);
+      }
+
+      function formatTimestamp(dateString) {
+        if (!dateString) return "TBD";
+        const date = new Date(dateString);
+        return new Intl.DateTimeFormat("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+          hour: "numeric",
+          minute: "2-digit"
+        }).format(date);
+      }
+
+      function formatTimeRange(dateString, startTime, endTime) {
+        if (!dateString || !startTime || !endTime) return "Select a date and time.";
+        const start = new Date(`${dateString}T${startTime}`);
+        const end = new Date(`${dateString}T${endTime}`);
+        return `${formatLocalDate(dateString)} · ${new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" }).format(start)} - ${new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" }).format(end)}`;
+      }
+
+      function toICSDate(dateString, timeString) {
+        const date = new Date(`${dateString}T${timeString}:00`);
+        const pad = (value) => String(value).padStart(2, "0");
+        return [
+          date.getUTCFullYear(),
+          pad(date.getUTCMonth() + 1),
+          pad(date.getUTCDate())
+        ].join("") + "T" + [
+          pad(date.getUTCHours()),
+          pad(date.getUTCMinutes()),
+          pad(date.getUTCSeconds())
+        ].join("") + "Z";
+      }
+
+      function createICSContent(event, clubName) {
+        const uid = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}@clubcal.app`;
+        const now = new Date();
+        const dtstamp = [
+          now.getUTCFullYear(),
+          String(now.getUTCMonth() + 1).padStart(2, "0"),
+          String(now.getUTCDate()).padStart(2, "0")
+        ].join("") + "T" + [
+          String(now.getUTCHours()).padStart(2, "0"),
+          String(now.getUTCMinutes()).padStart(2, "0"),
+          String(now.getUTCSeconds()).padStart(2, "0")
+        ].join("") + "Z";
+        const descriptionLines = [
+          event.description || "",
+          `Attire: ${event.attire || "Not specified"}`,
+          `RSVP: ${event.rsvp_url || event.rsvp || "N/A"}`
+        ].filter(Boolean).join("\n");
+        const location = [event.address, event.room].filter(Boolean).join(", ");
+
+        return [
+          "BEGIN:VCALENDAR",
+          "VERSION:2.0",
+          "PRODID:-//ClubCal//ClubCal//EN",
+          "CALSCALE:GREGORIAN",
+          "METHOD:PUBLISH",
+          "BEGIN:VEVENT",
+          `UID:${uid}`,
+          `DTSTAMP:${dtstamp}`,
+          `DTSTART:${toICSDate(event.date, event.start_time || event.startTime)}`,
+          `DTEND:${toICSDate(event.date, event.end_time || event.endTime)}`,
+          `SUMMARY:${escapeICS(`${event.title} – ${clubName}`)}`,
+          `DESCRIPTION:${escapeICS(descriptionLines)}`,
+          `LOCATION:${escapeICS(location)}`,
+          `X-ATTIRE:${escapeICS(event.attire || "")}`,
+          `X-CLUB:${escapeICS(clubName)}`,
+          "END:VEVENT",
+          "END:VCALENDAR"
+        ].join("\r\n");
+      }
+
+      function downloadICS(event, clubName, triggerButton) {
+        const content = createICSContent(event, clubName);
+        const blob = new Blob([content], { type: "text/calendar;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        const slug = `${clubName}-${event.title}`.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+        anchor.href = url;
+        anchor.download = `${slug || "clubcal-event"}.ics`;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        URL.revokeObjectURL(url);
+        if (triggerButton) {
+          triggerButton.classList.remove("calendar-pulse");
+          void triggerButton.offsetWidth;
+          triggerButton.classList.add("calendar-pulse");
+        }
+      }
+
+      function buildHeaders(includeAuth = false) {
+        const headers = {
+          "Content-Type": "application/json",
+          "apikey": SUPABASE_ANON_KEY
+        };
+        if (includeAuth && state.authSession?.access_token) {
+          headers.Authorization = `Bearer ${state.authSession.access_token}`;
+        }
+        return headers;
+      }
+
+      async function authRequest(path, options = {}) {
+        const response = await fetch(`${SUPABASE_URL}/auth/v1/${path}`, {
+          ...options,
+          headers: {
+            ...buildHeaders(false),
+            ...(options.headers || {})
+          }
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(data.msg || data.error_description || data.error || "Authentication request failed.");
+        }
+        return data;
+      }
+
+      async function restRequest(path, options = {}) {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+          ...options,
+          headers: {
+            ...buildHeaders(true),
+            ...(options.headers || {})
+          }
+        });
+        const hasBody = response.status !== 204;
+        const data = hasBody ? await response.json().catch(() => ({})) : null;
+        if (!response.ok) {
+          const message = Array.isArray(data) ? "Supabase request failed." : data?.message || data?.error || "Supabase request failed.";
+          throw new Error(message);
+        }
+        return data;
+      }
+
+      function categoryClass(category) {
+        const slug = String(category || "other").toLowerCase();
+        return `category-${slug.replace(/[^a-z]+/g, "-")}`;
+      }
+
+      function closeMobileNav() {
+        navLinks.classList.remove("open");
+        navToggle.setAttribute("aria-expanded", "false");
+      }
+
+      function showView(name) {
+        if (name === "admin" && !ensureAdminAccess()) {
+          return;
+        }
+        state.currentView = name;
+        views.forEach((view) => {
+          const isTarget = view.dataset.view === name;
+          view.classList.remove("visible");
+          if (isTarget) {
+            view.classList.add("active");
+            requestAnimationFrame(() => view.classList.add("visible"));
+          } else {
+            view.classList.remove("active");
+          }
+        });
+
+        if (name === "dashboard") {
+          hydrateDashboard();
+        }
+        if (name === "discovery") {
+          schoolSearchInput.focus();
+          if (state.currentSchool && !state.currentDiscoveryData.length && isSupabaseConfigured()) {
+            loadSchoolDiscovery(state.currentSchool, false);
+          }
+        }
+        if (name === "admin") {
+          renderAdminList();
+        }
+        closeMobileNav();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function setTab(name) {
+        state.currentTab = name;
+        tabButtons.forEach((button) => button.classList.toggle("active", button.dataset.tab === name));
+        tabPanels.forEach((panel) => panel.classList.toggle("active", panel.dataset.tabPanel === name));
+        if (name === "insights") {
+          renderInsights();
+        }
+      }
+
+      function ensureConfigured() {
+        if (isSupabaseConfigured()) return true;
+        supabaseConfigSignup.hidden = false;
+        supabaseConfigSignin.hidden = false;
+        showToast("Supabase not configured", "Add your Supabase URL and anon key in the script config block first.");
+        return false;
+      }
+
+      function mapClub(row) {
+        return {
+          id: row.id,
+          clubName: row.club_name,
+          school: row.school,
+          email: row.email,
+          status: row.status,
+          createdAt: row.created_at
+        };
+      }
+
+      function mapEvent(row) {
+        return {
+          id: row.id,
+          club_id: row.club_id,
+          title: row.title,
+          date: row.date,
+          start_time: row.start_time,
+          end_time: row.end_time,
+          address: row.address,
+          room: row.room || "",
+          attire: row.attire || "",
+          category: row.category,
+          description: row.description || "",
+          rsvp_url: row.rsvp_url || "",
+          created_at: row.created_at,
+          download_count: row.download_count || 0
+        };
+      }
+
+      async function fetchClubByEmail(email) {
+        const { data, error } = await supabase
+          .from("clubs")
+          .select("*")
+          .eq("email", email)
+          .limit(1)
+          .maybeSingle();
+
+        if (error) throw error;
+        return data || null;
+      }
+
+      async function fetchActiveClubsBySchool(school) {
+        const { data, error } = await supabase
+          .from("clubs")
+          .select("*")
+          .eq("school", school)
+          .eq("status", "active")
+          .order("club_name", { ascending: true });
+
+        if (error) throw error;
+        return (data || []).map(mapClub);
+      }
+
+      async function fetchPendingClubs() {
+        const { data, error } = await supabase
+          .from("clubs")
+          .select("*")
+          .eq("status", "pending")
+          .order("created_at", { ascending: true });
+
+        if (error) throw error;
+        return (data || []).map(mapClub);
+      }
+
+      async function fetchEventsByClubIds(clubIds) {
+        if (!clubIds.length) return [];
+        const { data, error } = await supabase
+          .from("events")
+          .select("*")
+          .in("club_id", clubIds)
+          .order("date", { ascending: true })
+          .order("start_time", { ascending: true });
+
+        if (error) throw error;
+        return (data || []).map(mapEvent);
+      }
+
+      async function fetchEventsForClub(clubId) {
+        const { data, error } = await supabase
+          .from("events")
+          .select("*")
+          .eq("club_id", clubId)
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+        return (data || []).map(mapEvent);
+      }
+
+      async function createClubAccount({ clubName, school, email, password }) {
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+
+        const userId = data?.user?.id;
+        if (!userId) {
+          throw new Error("We couldn't create the auth user. Please try again.");
+        }
+
+        const { error: insertError } = await supabase.from("clubs").insert({
+          user_id: userId,
+          club_name: clubName,
+          school,
+          email,
+          status: "pending"
+        });
+
+        if (insertError) throw insertError;
+        return data;
+      }
+
+      async function signInClub(email, password) {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          throw new Error("Invalid email or password.");
+        }
+
+        state.authSession = data?.session || null;
+        const clubRow = await fetchClubByEmail(email);
+        if (!clubRow) {
+          throw new Error("No approved club found for this email.");
+        }
+
+        state.activeClub = mapClub(clubRow);
+        state.dashboardStatus = clubRow.status || "";
+        return state.activeClub;
+      }
+
+      async function restoreAuthSession() {
+        if (!isSupabaseConfigured()) return;
+        try {
+          const { data, error } = await supabase.auth.getSession();
+          if (error) throw error;
+
+          const session = data?.session;
+          if (!session?.user?.email) return;
+
+          state.authSession = session;
+          const clubRow = await fetchClubByEmail(session.user.email);
+          if (!clubRow) return;
+
+          state.activeClub = mapClub(clubRow);
+          state.dashboardStatus = clubRow.status || "";
+        } catch (error) {
+          state.authSession = null;
+          state.activeClub = null;
+          state.dashboardStatus = "";
+        }
+      }
+
+      async function signOutClub() {
+        state.authSession = null;
+        state.activeClub = null;
+        state.dashboardEvents = [];
+        state.dashboardStatus = "";
+      }
+
+      async function createEventRecord(payload) {
+        const { data, error } = await supabase
+          .from("events")
+          .insert({
+            club_id: state.activeClub.id,
+            title: payload.title,
+            date: payload.date,
+            start_time: payload.startTime,
+            end_time: payload.endTime,
+            address: payload.address,
+            room: payload.room || null,
+            attire: payload.attire || null,
+            category: payload.category,
+            description: payload.description || null,
+            rsvp_url: payload.rsvp || null,
+            download_count: 0
+          })
+          .select()
+          .single();
+
+        if (error) throw error;
+        return mapEvent(data);
+      }
+
+      async function deleteEventRecord(eventId) {
+        await restRequest(`events?id=eq.${eventId}`, { method: "DELETE" });
+      }
+
+      async function updateEventDownloadCount(eventItem) {
+        const nextCount = (eventItem.download_count || 0) + 1;
+        await restRequest(`events?id=eq.${eventItem.id}`, {
+          method: "PATCH",
+          headers: {
+            Prefer: "return=representation"
+          },
+          body: JSON.stringify({ download_count: nextCount })
+        });
+        eventItem.download_count = nextCount;
+        return nextCount;
+      }
+
+      async function updateClubProfile(clubId, updates) {
+        const rows = await restRequest(`clubs?id=eq.${clubId}`, {
+          method: "PATCH",
+          headers: {
+            Prefer: "return=representation"
+          },
+          body: JSON.stringify(updates)
+        });
+        return mapClub(rows[0]);
+      }
+
+      async function approveClub(clubId) {
+        await restRequest(`clubs?id=eq.${clubId}`, {
+          method: "PATCH",
+          headers: {
+            Prefer: "return=representation"
+          },
+          body: JSON.stringify({ status: "active" })
+        });
+      }
+
+      async function rejectClub(clubId) {
+        await restRequest(`clubs?id=eq.${clubId}`, { method: "DELETE" });
+      }
+
+      function updatePreview() {
+        const formData = new FormData(eventForm);
+        const title = formData.get("title") || "Your event title";
+        const description = formData.get("description") || "Add an optional description if you want students to know more before they save it.";
+        const date = formData.get("date");
+        const startTime = formData.get("startTime");
+        const endTime = formData.get("endTime");
+        const address = formData.get("address");
+        const room = formData.get("room");
+        const attire = formData.get("attire");
+        const category = formData.get("category");
+        const rsvp = formData.get("rsvp");
+
+        previewRefs.title.textContent = title;
+        previewRefs.description.textContent = description;
+        previewRefs.datetime.textContent = formatTimeRange(date, startTime, endTime);
+        previewRefs.location.textContent = address || room ? [address, room].filter(Boolean).join(", ") : "Add an address and optional room/building.";
+        previewRefs.attire.textContent = attire || "Optional attire note.";
+        previewRefs.category.textContent = category || "Pick a category for discovery.";
+        previewRefs.rsvp.textContent = rsvp || "Optional RSVP link appears here.";
+      }
+
+      async function hydrateDashboard() {
+        if (!state.activeClub) return;
+        dashboardTitle.textContent = `Welcome back, ${state.activeClub.clubName}`;
+        settingsClubName.textContent = state.activeClub.clubName;
+        settingsSchool.textContent = state.activeClub.school || "-";
+        settingsEmail.textContent = state.activeClub.email;
+        settingsClubNameInput.value = state.activeClub.clubName;
+        settingsSchoolInput.value = state.activeClub.school || "";
+        settingsEmailInput.value = state.activeClub.email;
+        accountBadge.className = `badge ${state.dashboardStatus === "active" ? "active" : "pending"}`;
+        accountBadge.textContent = state.dashboardStatus === "active" ? "Active" : "Pending";
+
+        await renderEvents();
+        renderInsights();
+      }
+
+      async function renderEvents() {
+        if (!state.activeClub?.id) {
+          eventsList.innerHTML = `<div class="empty-state">No events yet. Create your first event in the <strong>Create Event</strong> tab and it will appear here.</div>`;
+          return;
+        }
+
+        eventsList.innerHTML = `<div class="loading-state">Loading your events...</div>`;
+
+        try {
+          const { data, error } = await supabase
+            .from("events")
+            .select("*")
+            .eq("club_id", state.activeClub.id)
+            .order("created_at", { ascending: false });
+
+          if (error) throw error;
+          state.dashboardEvents = (data || []).map(mapEvent);
+        } catch (error) {
+          state.dashboardEvents = [];
+          eventsList.innerHTML = `<div class="empty-state">${escapeHTML(error.message)}</div>`;
+          return;
+        }
+
+        if (!state.dashboardEvents.length) {
+          eventsList.innerHTML = `<div class="empty-state">No events yet. Create your first event in the <strong>Create Event</strong> tab and it will appear here.</div>`;
+          return;
+        }
+
+        eventsList.innerHTML = state.dashboardEvents.map((eventItem) => `
+          <article class="event-card">
+            <div class="club-top">
+              <div>
+                <h3 class="event-heading">${escapeHTML(eventItem.title)}</h3>
+                <div class="badge ${categoryClass(eventItem.category)}">${escapeHTML(eventItem.category)}</div>
+              </div>
+            </div>
+            <div class="event-meta">
+              <div class="meta-line"><strong>When</strong><span>${escapeHTML(formatTimeRange(eventItem.date, eventItem.start_time, eventItem.end_time))}</span></div>
+              <div class="meta-line"><strong>Where</strong><span>${escapeHTML([eventItem.address, eventItem.room].filter(Boolean).join(", "))}</span></div>
+              <div class="meta-line"><strong>Downloads</strong><span>${escapeHTML(String(eventItem.download_count || 0))}</span></div>
+            </div>
+            <div class="event-actions">
+              <button class="btn btn-secondary btn-small js-download-event" data-id="${eventItem.id}">Download .ics</button>
+              <button class="btn btn-danger btn-small js-delete-event" data-id="${eventItem.id}">Delete</button>
+            </div>
+          </article>
+        `).join("");
+
+        eventsList.querySelectorAll(".js-download-event").forEach((button) => {
+          button.addEventListener("click", async () => {
+            const eventItem = state.dashboardEvents.find((item) => String(item.id) === button.dataset.id);
+            if (!eventItem) return;
+            downloadICS(eventItem, state.activeClub.clubName, button);
+            try {
+              await updateEventDownloadCount(eventItem);
+              await renderEvents();
+              renderInsights();
+            } catch (error) {
+              showToast("Download tracked locally", "The calendar file downloaded, but analytics could not update.");
+            }
+            showToast("Calendar file downloaded", `${eventItem.title} is ready for your calendar.`);
+          });
+        });
+
+        eventsList.querySelectorAll(".js-delete-event").forEach((button) => {
+          button.addEventListener("click", async () => {
+            try {
+              await deleteEventRecord(button.dataset.id);
+              await renderEvents();
+              renderInsights();
+              showToast("Event deleted", "The event was removed from your dashboard.");
+            } catch (error) {
+              showToast("Delete failed", error.message);
+            }
+          });
+        });
+      }
+
+      function renderInsights() {
+        const events = state.dashboardEvents;
+        const totalDownloads = events.reduce((sum, eventItem) => sum + (eventItem.download_count || 0), 0);
+        const topEvent = [...events].sort((a, b) => (b.download_count || 0) - (a.download_count || 0))[0];
+
+        insightsTotalDownloads.textContent = String(totalDownloads);
+        insightsEventCount.textContent = String(events.length);
+        insightsTopDownloads.textContent = String(topEvent?.download_count || 0);
+        insightsTopEventLabel.textContent = topEvent ? topEvent.title : "No event downloads yet.";
+
+        if (!events.length) {
+          insightsChart.innerHTML = `<div class="empty-state">Publish an event and start collecting calendar downloads to see insights here.</div>`;
+          return;
+        }
+
+        const maxDownloads = Math.max(...events.map((eventItem) => eventItem.download_count || 0), 1);
+        insightsChart.innerHTML = events.map((eventItem) => `
+          <div class="bar-group">
+            <div class="bar-track">
+              <div class="bar-fill" data-height="${Math.max(8, Math.round(((eventItem.download_count || 0) / maxDownloads) * 100))}"></div>
+            </div>
+            <div class="bar-value">${escapeHTML(String(eventItem.download_count || 0))}</div>
+            <div class="bar-label">${escapeHTML(eventItem.title)}</div>
+          </div>
+        `).join("");
+
+        insightsChart.querySelectorAll(".bar-fill").forEach((bar) => {
+          requestAnimationFrame(() => {
+            bar.style.height = `${bar.dataset.height}%`;
+          });
+        });
+      }
+
+      async function renderAdminList() {
+        if (!ensureConfigured()) {
+          adminList.innerHTML = `<div class="empty-state">Supabase must be configured before the admin panel can load pending clubs.</div>`;
+          return;
+        }
+
+        adminList.innerHTML = `<div class="loading-state">Loading pending clubs...</div>`;
+        try {
+          const pendingClubs = await fetchPendingClubs();
+          if (!pendingClubs.length) {
+            adminList.innerHTML = `<div class="empty-state">No pending club applications right now.</div>`;
+            return;
+          }
+
+          adminList.innerHTML = pendingClubs.map((club) => `
+            <article class="event-card">
+              <div class="club-top">
+                <div>
+                  <h3 class="event-heading">${escapeHTML(club.clubName)}</h3>
+                  <div class="badge pending">Pending Review</div>
+                </div>
+              </div>
+              <div class="event-meta">
+                <div class="meta-line"><strong>School</strong><span>${escapeHTML(club.school)}</span></div>
+                <div class="meta-line"><strong>Email</strong><span>${escapeHTML(club.email)}</span></div>
+                <div class="meta-line"><strong>Submitted</strong><span>${escapeHTML(formatTimestamp(club.createdAt))}</span></div>
+              </div>
+              <div class="event-actions">
+                <button class="btn btn-primary btn-small js-approve-club" data-id="${club.id}">Approve</button>
+                <button class="btn btn-danger btn-small js-reject-club" data-id="${club.id}">Reject</button>
+              </div>
+            </article>
+          `).join("");
+
+          adminList.querySelectorAll(".js-approve-club").forEach((button) => {
+            button.addEventListener("click", async () => {
+              try {
+                await approveClub(button.dataset.id);
+                showToast("Club approved", "The club is now active in discovery.");
+                renderAdminList();
+              } catch (error) {
+                showToast("Approve failed", error.message);
+              }
+            });
+          });
+
+          adminList.querySelectorAll(".js-reject-club").forEach((button) => {
+            button.addEventListener("click", async () => {
+              try {
+                await rejectClub(button.dataset.id);
+                showToast("Club rejected", "The pending application was removed.");
+                renderAdminList();
+              } catch (error) {
+                showToast("Reject failed", error.message);
+              }
+            });
+          });
+        } catch (error) {
+          adminList.innerHTML = `<div class="empty-state">${escapeHTML(error.message)}</div>`;
+        }
+      }
+
+      function groupDiscoveryData(clubs, events) {
+        return clubs.map((club) => {
+          const clubEvents = events.filter((eventItem) => eventItem.club_id === club.id);
+          const latestCreatedAt = clubEvents.reduce((latest, eventItem) => {
+            if (!latest) return eventItem.created_at;
+            return new Date(eventItem.created_at) > new Date(latest) ? eventItem.created_at : latest;
+          }, "");
+          const cutoff = new Date();
+          cutoff.setDate(cutoff.getDate() - 60);
+          const hasRecentEvents = latestCreatedAt ? new Date(latestCreatedAt) >= cutoff : false;
+          const upcomingEvents = clubEvents
+            .filter((eventItem) => new Date(`${eventItem.date}T${eventItem.start_time}`) >= new Date())
+            .sort((a, b) => new Date(`${a.date}T${a.start_time}`) - new Date(`${b.date}T${b.start_time}`));
+
+          return {
+            ...club,
+            category: upcomingEvents[0]?.category || clubEvents[0]?.category || "Other",
+            description: hasRecentEvents
+              ? "Browse upcoming events and add the next one straight to your calendar."
+              : "This club has not posted a recent event, so we are not surfacing stale details.",
+            events: clubEvents,
+            latestCreatedAt,
+            hasRecentEvents,
+            nextEvent: upcomingEvents[0] || clubEvents[0] || null
+          };
+        });
+      }
+
+      async function loadSchoolDiscovery(school, navigate = false) {
+        if (!ensureConfigured()) return;
+        state.currentSchool = school;
+        localStorage.setItem(STORAGE_KEYS.lastViewedSchool, school);
+        selectedSchoolTitle.textContent = `${school} Clubs`;
+        schoolSearchInput.value = school;
+        landingSchoolInput.value = school;
+        discoveryResults.hidden = false;
+        clubGrid.innerHTML = `<div class="loading-state">Loading active clubs for ${escapeHTML(school)}...</div>`;
+
+        try {
+          const clubs = await fetchActiveClubsBySchool(school);
+          const events = await fetchEventsByClubIds(clubs.map((club) => club.id));
+          state.currentClubRows = clubs;
+          state.currentDiscoveryData = groupDiscoveryData(clubs, events);
+          renderClubGrid();
+          if (navigate) {
+            showView("discovery");
+          }
+        } catch (error) {
+          clubGrid.innerHTML = `<div class="empty-state">${escapeHTML(error.message)}</div>`;
+          if (navigate) {
+            showView("discovery");
+          }
+        }
+      }
+
+      function renderClubGrid() {
+        const filtered = state.currentFilter === "All"
+          ? state.currentDiscoveryData
+          : state.currentDiscoveryData.filter((club) => club.category === state.currentFilter);
+
+        if (!filtered.length) {
+          clubGrid.innerHTML = `
+            <div class="empty-state" style="grid-column:1/-1;">
+              <p style="font-size:1.1rem; font-weight:700; color:var(--navy); margin:0 0 8px;">No clubs listed yet at ${escapeHTML(state.currentSchool)}.</p>
+              <p style="margin:0 0 18px;">Are you a club officer here? Get your club in front of students who are already looking.</p>
+              <button class="btn btn-primary btn-small" data-route="signup">Register Your Club →</button>
+            </div>
+          `;
+
+          clubGrid.querySelectorAll('[data-route]').forEach(trigger => {
+            trigger.addEventListener('click', (e) => {
+              e.preventDefault();
+              showView(trigger.dataset.route);
+            });
+          });
+          return;
+        }
+
+        clubGrid.innerHTML = filtered.map((club) => `
+          <article class="club-card" data-club-id="${club.id}">
+            <div class="club-top">
+              <div>
+                <h3 class="event-heading">${escapeHTML(club.clubName)}</h3>
+                <div class="badge ${categoryClass(club.category)}">${escapeHTML(club.category)}</div>
+              </div>
+              <div class="club-count">${escapeHTML(String(club.events.length))} events</div>
+            </div>
+            <p>${escapeHTML(club.description)}</p>
+            ${club.hasRecentEvents && club.nextEvent ? `
+              <div class="event-preview">
+                <div class="event-preview-title">${escapeHTML(club.nextEvent.title)}</div>
+                <div class="event-preview-copy">${escapeHTML(formatTimeRange(club.nextEvent.date, club.nextEvent.start_time, club.nextEvent.end_time))}</div>
+              </div>
+              <div class="last-updated">Last updated ${escapeHTML(formatTimestamp(club.latestCreatedAt))}</div>
+            ` : `
+              <div class="stale-indicator">No recent events</div>
+            `}
+            <div class="club-actions">
+              <button class="btn btn-primary btn-small js-student-download" data-id="${club.id}" ${club.hasRecentEvents && club.nextEvent ? "" : "disabled"}>Add Next Event to Calendar</button>
+              <button class="btn btn-ghost btn-small js-toggle-events" data-expanded="false" ${club.events.length ? "" : "disabled"}>View All Events</button>
+            </div>
+            <div class="club-events-expanded" hidden>
+              ${club.events.length ? club.events.map((eventItem) => `
+                <div class="mini-event">
+                  <strong class="mini-event-title">${escapeHTML(eventItem.title)}</strong>
+                  <div>${escapeHTML(formatTimeRange(eventItem.date, eventItem.start_time, eventItem.end_time))}</div>
+                  <div>${escapeHTML([eventItem.address, eventItem.room].filter(Boolean).join(", "))}</div>
+                </div>
+              `).join("") : `<div class="mini-event">No events posted yet.</div>`}
+            </div>
+          </article>
+        `).join("");
+
+        clubGrid.querySelectorAll(".js-student-download").forEach((button) => {
+          button.addEventListener("click", async () => {
+            const club = state.currentDiscoveryData.find((item) => String(item.id) === button.dataset.id);
+            if (!club?.nextEvent) return;
+            downloadICS(club.nextEvent, club.clubName, button);
+            try {
+              await updateEventDownloadCount(club.nextEvent);
+            } catch (error) {
+              showToast("Downloaded", "The event downloaded, but analytics could not be updated.");
+            }
+            showToast("Event saved", `${club.nextEvent.title} is ready for your calendar.`);
+
+            const promptKey = `${STORAGE_KEYS.studentPrompt}:${state.currentSchool}`;
+            if (!localStorage.getItem(promptKey)) {
+              localStorage.setItem(promptKey, "true");
+              setTimeout(() => {
+                showToast(`Starting at ${state.currentSchool} this fall?`, "Save this page — new events get added all semester.");
+              }, 300);
+            }
+          });
+        });
+
+        clubGrid.querySelectorAll(".js-toggle-events").forEach((button) => {
+          button.addEventListener("click", () => {
+            const expanded = button.dataset.expanded === "true";
+            const target = button.closest(".club-card").querySelector(".club-events-expanded");
+            button.dataset.expanded = String(!expanded);
+            button.textContent = expanded ? "View All Events" : "Hide Events";
+            target.hidden = expanded;
+          });
+        });
+      }
+
+      function renderSchoolSuggestions(query, input, container, onSelect) {
+        const value = query.trim().toLowerCase();
+        if (!value) {
+          container.classList.remove("visible");
+          container.innerHTML = "";
+          input.setAttribute("aria-expanded", "false");
+          return;
+        }
+
+        const matches = schoolList.filter((school) => school.toLowerCase().includes(value)).slice(0, 10);
+        if (!matches.length) {
+          container.classList.remove("visible");
+          container.innerHTML = "";
+          input.setAttribute("aria-expanded", "false");
+          return;
+        }
+
+        container.innerHTML = matches.map((school) => `
+          <button class="suggestion" type="button" data-school="${escapeHTML(school)}">${escapeHTML(school)}</button>
+        `).join("");
+        container.classList.add("visible");
+        input.setAttribute("aria-expanded", "true");
+        container.querySelectorAll(".suggestion").forEach((button) => {
+          button.addEventListener("click", () => onSelect(button.dataset.school));
+        });
+      }
+
+      function selectSignupSchool(name) {
+        signupSchoolInput.value = name;
+        signupSchoolSuggestions.classList.remove("visible");
+        signupSchoolInput.setAttribute("aria-expanded", "false");
+      }
+
+      function selectLandingSchool(name) {
+        landingSchoolInput.value = name;
+        landingSuggestions.classList.remove("visible");
+        landingSchoolInput.setAttribute("aria-expanded", "false");
+        loadSchoolDiscovery(name, true);
+      }
+
+      function selectDiscoverySchool(name) {
+        schoolSearchInput.value = name;
+        suggestionsEl.classList.remove("visible");
+        schoolSearchInput.setAttribute("aria-expanded", "false");
+        loadSchoolDiscovery(name, false);
+      }
+
+      function ensureAdminAccess() {
+        if (sessionStorage.getItem(STORAGE_KEYS.adminSession) === "true") return true;
+        const entry = window.prompt("Enter the admin password to access Club Cal admin:");
+        if (entry === ADMIN_PASSWORD) {
+          sessionStorage.setItem(STORAGE_KEYS.adminSession, "true");
+          return true;
+        }
+        if (window.location.hash === "#admin") {
+          history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+        }
+        showToast("Admin access denied", "The admin password was incorrect.");
+        showView("landing");
+        return false;
+      }
+
+      function syncHashRoute() {
+        if (window.location.hash === "#admin") {
+          showView("admin");
+        } else if (state.currentView === "admin") {
+          showView("landing");
+        }
+      }
+
+      routeTriggers.forEach((trigger) => {
+        trigger.addEventListener("click", (event) => {
+          event.preventDefault();
+          const route = trigger.dataset.route;
+          if (!route) return;
+          showView(route);
+        });
+      });
+
+      tabButtons.forEach((button) => {
+        button.addEventListener("click", () => setTab(button.dataset.tab));
+      });
+
+      navToggle.addEventListener("click", () => {
+        const next = navToggle.getAttribute("aria-expanded") !== "true";
+        navToggle.setAttribute("aria-expanded", String(next));
+        navLinks.classList.toggle("open", next);
+      });
+
+      landingSchoolInput.addEventListener("input", () => renderSchoolSuggestions(landingSchoolInput.value, landingSchoolInput, landingSuggestions, selectLandingSchool));
+      landingSchoolInput.addEventListener("focus", () => renderSchoolSuggestions(landingSchoolInput.value, landingSchoolInput, landingSuggestions, selectLandingSchool));
+      schoolSearchInput.addEventListener("input", () => renderSchoolSuggestions(schoolSearchInput.value, schoolSearchInput, suggestionsEl, selectDiscoverySchool));
+      schoolSearchInput.addEventListener("focus", () => renderSchoolSuggestions(schoolSearchInput.value, schoolSearchInput, suggestionsEl, selectDiscoverySchool));
+      signupSchoolInput.addEventListener("input", () => renderSchoolSuggestions(signupSchoolInput.value, signupSchoolInput, signupSchoolSuggestions, selectSignupSchool));
+      signupSchoolInput.addEventListener("focus", () => renderSchoolSuggestions(signupSchoolInput.value, signupSchoolInput, signupSchoolSuggestions, selectSignupSchool));
+
+      document.addEventListener("click", (event) => {
+        if (!landingSuggestions.contains(event.target) && event.target !== landingSchoolInput) {
+          landingSuggestions.classList.remove("visible");
+          landingSchoolInput.setAttribute("aria-expanded", "false");
+        }
+        if (!suggestionsEl.contains(event.target) && event.target !== schoolSearchInput) {
+          suggestionsEl.classList.remove("visible");
+          schoolSearchInput.setAttribute("aria-expanded", "false");
+        }
+        if (!signupSchoolSuggestions.contains(event.target) && event.target !== signupSchoolInput) {
+          signupSchoolSuggestions.classList.remove("visible");
+          signupSchoolInput.setAttribute("aria-expanded", "false");
+        }
+      });
+
+      filterBar.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-filter]");
+        if (!button) return;
+        state.currentFilter = button.dataset.filter;
+        [...filterBar.querySelectorAll("[data-filter]")].forEach((chip) => chip.classList.toggle("active", chip === button));
+        renderClubGrid();
+      });
+
+      signupForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        clearErrors(signupForm);
+        if (!ensureConfigured()) return;
+
+        const formData = new FormData(signupForm);
+        const payload = {
+          clubName: String(formData.get("clubName") || "").trim(),
+          school: String(formData.get("school") || "").trim(),
+          email: String(formData.get("email") || "").trim(),
+          password: String(formData.get("password") || "")
+        };
+
+        const { data: authData, error: authError } = await supabase.auth.signUp({ 
+          email: payload.email, 
+          password: payload.password 
+        });
+
+        if (authError) {
+          setError(signupForm, 'email', authError.message);
+          return;
+        }
+
+        const userId = authData?.user?.id;
+
+        if (!userId) {
+          setError(signupForm, 'email', 'Signup failed. Please try again.');
+          return;
+        }
+
+        const { error: insertError } = await supabase.from('clubs').insert({
+          user_id: userId,
+          club_name: payload.clubName,
+          school: payload.school,
+          email: payload.email,
+          status: 'pending'
+        });
+
+        if (insertError) {
+          setError(signupForm, 'email', insertError.message);
+          return;
+        }
+
+        signupSuccessText.textContent = `Thanks! Your application for ${payload.clubName} has been submitted for review.`;
+        signupSuccess.classList.add('visible');
+        signupForm.classList.add('hidden');
+      });
+
+      signinForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        clearErrors(signinForm);
+        if (!ensureConfigured()) return;
+
+        const formData = new FormData(signinForm);
+        const email = String(formData.get("email") || "").trim();
+        const password = String(formData.get("password") || "");
+        let valid = true;
+
+        if (!email) {
+          setError(signinForm, "signinEmail", "Please enter your email address.");
+          valid = false;
+        }
+        if (!password) {
+          setError(signinForm, "signinPassword", "Please enter your password.");
+          valid = false;
+        }
+        if (!valid) return;
+
+        try {
+          await signInClub(email, password);
+          await hydrateDashboard();
+          settingsForm.hidden = true;
+          settingsReadView.hidden = false;
+          settingsEditBtn.hidden = false;
+          setTab("events");
+          showView("dashboard");
+        } catch (error) {
+          const message = error.message === "Invalid email or password." ? error.message : "No approved club found for this email.";
+          setError(signinForm, "signinPassword", message);
+        }
+      });
+
+      eventForm.addEventListener("input", updatePreview);
+      eventForm.addEventListener("change", updatePreview);
+
+      eventForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        clearErrors(eventForm);
+        if (!ensureConfigured()) return;
+        if (!state.activeClub) {
+          showToast("Sign in required", "Please sign in with a club account before creating events.");
+          return;
+        }
+
+        const formData = new FormData(eventForm);
+        const payload = Object.fromEntries(formData.entries());
+        const requiredFields = [
+          ["title", "Please enter an event title."],
+          ["date", "Please select a date."],
+          ["startTime", "Please choose a start time."],
+          ["endTime", "Please choose an end time."],
+          ["address", "Please add a location or address."],
+          ["category", "Please choose a category."]
+        ];
+        let valid = true;
+
+        requiredFields.forEach(([field, message]) => {
+          if (!String(payload[field] || "").trim()) {
+            setError(eventForm, field, message);
+            valid = false;
+          }
+        });
+
+        if (payload.rsvp && !/^https?:\/\/.+/i.test(payload.rsvp)) {
+          setError(eventForm, "rsvp", "Please enter a valid URL starting with http:// or https://");
+          valid = false;
+        }
+
+        if (payload.date && payload.startTime && payload.endTime) {
+          const start = new Date(`${payload.date}T${payload.startTime}`);
+          const end = new Date(`${payload.date}T${payload.endTime}`);
+          if (end <= start) {
+            setError(eventForm, "endTime", "End time must be after the start time.");
+            valid = false;
+          }
+        }
+
+        if (!valid) return;
+
+        try {
+          const newEvent = await createEventRecord(payload);
+          downloadICS(newEvent, state.activeClub.clubName, createEventSubmit);
+          try {
+            await updateEventDownloadCount(newEvent);
+          } catch (error) {
+            // Non-blocking analytics update if the download counter update fails.
+          }
+          showToast("Event created", `${newEvent.title} was saved and downloaded as an .ics file.`);
+          eventForm.reset();
+          updatePreview();
+          await renderEvents();
+          renderInsights();
+          setTab("events");
+        } catch (error) {
+          showToast("Event creation failed", error.message);
+        }
+      });
+
+      settingsEditBtn.addEventListener("click", () => {
+        if (!state.activeClub) return;
+        settingsClubNameInput.value = state.activeClub.clubName;
+        settingsSchoolInput.value = state.activeClub.school || "";
+        settingsEmailInput.value = state.activeClub.email;
+        settingsReadView.hidden = true;
+        settingsForm.hidden = false;
+        settingsEditBtn.hidden = true;
+      });
+
+      settingsCancelBtn.addEventListener("click", () => {
+        settingsForm.hidden = true;
+        settingsReadView.hidden = false;
+        settingsEditBtn.hidden = false;
+        clearErrors(settingsForm);
+      });
+
+      settingsForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        clearErrors(settingsForm);
+        if (!state.activeClub || !ensureConfigured()) return;
+        const clubName = settingsClubNameInput.value.trim();
+        const school = settingsSchoolInput.value.trim();
+        let valid = true;
+
+        if (!clubName) {
+          setError(settingsForm, "settingsClubName", "Club name is required.");
+          valid = false;
+        }
+        if (!school) {
+          setError(settingsForm, "settingsSchool", "School is required.");
+          valid = false;
+        }
+        if (!valid) return;
+
+        try {
+          const updated = await updateClubProfile(state.activeClub.id, {
+            club_name: clubName,
+            school
+          });
+          state.activeClub = updated;
+          settingsForm.hidden = true;
+          settingsReadView.hidden = false;
+          settingsEditBtn.hidden = false;
+          await hydrateDashboard();
+          showToast("Settings updated", "Your club profile was saved.");
+        } catch (error) {
+          showToast("Update failed", error.message);
+        }
+      });
+
+      signoutBtn.addEventListener("click", async () => {
+        try {
+          await supabase.auth.signOut();
+        } catch (error) {
+          // Keep local UI sign-out resilient even if network sign-out fails.
+        }
+        await signOutClub();
+        showToast("Signed out", "You’ve returned to the Club Cal home page.");
+        showView("landing");
+      });
+
+      window.addEventListener("hashchange", syncHashRoute);
+
+      if (state.currentSchool) {
+        landingSchoolInput.value = state.currentSchool;
+        schoolSearchInput.value = state.currentSchool;
+      }
+
+      updatePreview();
+      setTab("events");
+      supabase.auth.getSession().then(async ({ data, error }) => {
+        if (error || !data?.session?.user?.email) return;
+        state.authSession = data.session;
+        const clubRow = await fetchClubByEmail(data.session.user.email).catch(() => null);
+        if (!clubRow) return;
+        state.activeClub = mapClub(clubRow);
+        state.dashboardStatus = clubRow.status || "";
+        await hydrateDashboard();
+      });
+      syncHashRoute();
+    })();
+  </script>
+</body>
+</html>
