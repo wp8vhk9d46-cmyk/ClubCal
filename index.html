@@ -1516,7 +1516,7 @@
         </div>
 
         <section class="social-proof">
-          Built by an NYU student who was tired of missing events. Starting with NYU — coming to your school next.
+          Built by a New York University student who was tired of missing events. Starting with New York University — coming to your school next.
         </section>
 
         <section class="section">
@@ -1953,20 +1953,6 @@
         adminSession: "clubcal_admin_session"
       };
 
-      const schoolData = {};
-      const schoolList = [
-        "UCLA",
-        "NYU",
-        "University of Michigan",
-        "Stanford University",
-        "Boston University",
-        "Columbia University",
-        "Westview High School",
-        "Lincoln High School",
-        "Jefferson Academy",
-        "Riverside Community College"
-      ];
-
       const views = [...document.querySelectorAll("[data-view]")];
       const routeTriggers = [...document.querySelectorAll("[data-route]")];
       const tabButtons = [...document.querySelectorAll(".tab-btn")];
@@ -2346,18 +2332,6 @@
         return data || null;
       }
 
-      async function fetchActiveClubsBySchool(school) {
-        const { data, error } = await supabase
-          .from("clubs")
-          .select("*")
-          .eq("school", school)
-          .eq("status", "active")
-          .order("club_name", { ascending: true });
-
-        if (error) throw error;
-        return (data || []).map(mapClub);
-      }
-
       async function fetchPendingClubs() {
         const { data, error } = await supabase
           .from("clubs")
@@ -2369,25 +2343,12 @@
         return (data || []).map(mapClub);
       }
 
-      async function fetchEventsByClubIds(clubIds) {
-        if (!clubIds.length) return [];
-        const { data, error } = await supabase
-          .from("events")
-          .select("*")
-          .in("club_id", clubIds)
-          .order("date", { ascending: true })
-          .order("start_time", { ascending: true });
-
-        if (error) throw error;
-        return (data || []).map(mapEvent);
-      }
-
       async function fetchEventsForClub(clubId) {
         const { data, error } = await supabase
           .from("events")
           .select("*")
           .eq("club_id", clubId)
-          .order("created_at", { ascending: false });
+          .order("date", { ascending: true });
 
         if (error) throw error;
         return (data || []).map(mapEvent);
@@ -2653,7 +2614,7 @@
         insightsTopEventLabel.textContent = topEvent ? topEvent.title : "No event downloads yet.";
 
         if (!events.length) {
-          insightsChart.innerHTML = `<div class="empty-state">Publish an event and start collecting calendar downloads to see insights here.</div>`;
+          insightsChart.innerHTML = `<div class="empty-state">Create your first event to start tracking downloads.</div>`;
           return;
         }
 
@@ -2737,34 +2698,6 @@
         }
       }
 
-      function groupDiscoveryData(clubs, events) {
-        return clubs.map((club) => {
-          const clubEvents = events.filter((eventItem) => eventItem.club_id === club.id);
-          const latestCreatedAt = clubEvents.reduce((latest, eventItem) => {
-            if (!latest) return eventItem.created_at;
-            return new Date(eventItem.created_at) > new Date(latest) ? eventItem.created_at : latest;
-          }, "");
-          const cutoff = new Date();
-          cutoff.setDate(cutoff.getDate() - 60);
-          const hasRecentEvents = latestCreatedAt ? new Date(latestCreatedAt) >= cutoff : false;
-          const upcomingEvents = clubEvents
-            .filter((eventItem) => new Date(`${eventItem.date}T${eventItem.start_time}`) >= new Date())
-            .sort((a, b) => new Date(`${a.date}T${a.start_time}`) - new Date(`${b.date}T${b.start_time}`));
-
-          return {
-            ...club,
-            category: upcomingEvents[0]?.category || clubEvents[0]?.category || "Other",
-            description: hasRecentEvents
-              ? "Browse upcoming events and add the next one straight to your calendar."
-              : "This club has not posted a recent event, so we are not surfacing stale details.",
-            events: clubEvents,
-            latestCreatedAt,
-            hasRecentEvents,
-            nextEvent: upcomingEvents[0] || clubEvents[0] || null
-          };
-        });
-      }
-
       async function loadSchoolDiscovery(school, navigate = false) {
         if (!ensureConfigured()) return;
         state.currentSchool = school;
@@ -2773,31 +2706,50 @@
         schoolSearchInput.value = school;
         landingSchoolInput.value = school;
         discoveryResults.hidden = false;
-        clubGrid.innerHTML = `<div class="loading-state">Loading active clubs for ${escapeHTML(school)}...</div>`;
-
-        try {
-          const clubs = await fetchActiveClubsBySchool(school);
-          const events = await fetchEventsByClubIds(clubs.map((club) => club.id));
-          state.currentClubRows = clubs;
-          state.currentDiscoveryData = groupDiscoveryData(clubs, events);
-          renderClubGrid();
-          if (navigate) {
-            showView("discovery");
-          }
-        } catch (error) {
-          clubGrid.innerHTML = `<div class="empty-state">${escapeHTML(error.message)}</div>`;
-          if (navigate) {
-            showView("discovery");
-          }
+        await renderClubGrid();
+        if (navigate) {
+          showView("discovery");
         }
       }
 
-      function renderClubGrid() {
-        const filtered = state.currentFilter === "All"
-          ? state.currentDiscoveryData
-          : state.currentDiscoveryData.filter((club) => club.category === state.currentFilter);
+      async function renderClubGrid() {
+        clubGrid.innerHTML = `
+          <div class="empty-state" style="grid-column:1/-1; color:var(--muted);">Loading clubs...</div>
+        `;
 
-        if (!filtered.length) {
+        let clubs = [];
+        try {
+          const { data, error } = await supabase
+            .from('clubs')
+            .select('*, events(*)')
+            .eq('school', state.currentSchool)
+            .eq('status', 'active');
+
+          if (error) throw error;
+          clubs = data || [];
+        } catch (error) {
+          clubGrid.innerHTML = `<div class="empty-state">${escapeHTML(error.message)}</div>`;
+          return;
+        }
+
+        const normalized = clubs.map((club) => {
+          const clubEvents = (club.events || []).map(mapEvent).sort((a, b) => new Date(`${a.date}T${a.start_time}`) - new Date(`${b.date}T${b.start_time}`));
+          const upcomingEvents = clubEvents.filter((eventItem) => new Date(`${eventItem.date}T${eventItem.start_time}`) >= new Date());
+          const nextEvent = upcomingEvents[0] || null;
+          return {
+            ...mapClub(club),
+            events: clubEvents,
+            nextEvent,
+            category: nextEvent?.category || clubEvents[0]?.category || "Other"
+          };
+        });
+
+        state.currentClubRows = normalized;
+        state.currentDiscoveryData = state.currentFilter === "All"
+          ? normalized
+          : normalized.filter((club) => club.category === state.currentFilter);
+
+        if (!state.currentDiscoveryData.length) {
           clubGrid.innerHTML = `
             <div class="empty-state" style="grid-column:1/-1;">
               <p style="font-size:1.1rem; font-weight:700; color:var(--navy); margin:0 0 8px;">No clubs listed yet at ${escapeHTML(state.currentSchool)}.</p>
@@ -2815,7 +2767,7 @@
           return;
         }
 
-        clubGrid.innerHTML = filtered.map((club) => `
+        clubGrid.innerHTML = state.currentDiscoveryData.map((club) => `
           <article class="club-card" data-club-id="${club.id}">
             <div class="club-top">
               <div>
@@ -2824,18 +2776,17 @@
               </div>
               <div class="club-count">${escapeHTML(String(club.events.length))} events</div>
             </div>
-            <p>${escapeHTML(club.description)}</p>
-            ${club.hasRecentEvents && club.nextEvent ? `
+            <p>Browse upcoming events and add the next one straight to your calendar.</p>
+            ${club.nextEvent ? `
               <div class="event-preview">
                 <div class="event-preview-title">${escapeHTML(club.nextEvent.title)}</div>
                 <div class="event-preview-copy">${escapeHTML(formatTimeRange(club.nextEvent.date, club.nextEvent.start_time, club.nextEvent.end_time))}</div>
               </div>
-              <div class="last-updated">Last updated ${escapeHTML(formatTimestamp(club.latestCreatedAt))}</div>
             ` : `
-              <div class="stale-indicator">No recent events</div>
+              <div class="stale-indicator">No upcoming events yet</div>
             `}
             <div class="club-actions">
-              <button class="btn btn-primary btn-small js-student-download" data-id="${club.id}" ${club.hasRecentEvents && club.nextEvent ? "" : "disabled"}>Add Next Event to Calendar</button>
+              <button class="btn btn-primary btn-small js-student-download" data-id="${club.id}" ${club.nextEvent ? "" : "disabled"}>Add Next Event to Calendar</button>
               <button class="btn btn-ghost btn-small js-toggle-events" data-expanded="false" ${club.events.length ? "" : "disabled"}>View All Events</button>
             </div>
             <div class="club-events-expanded" hidden>
@@ -2845,7 +2796,7 @@
                   <div>${escapeHTML(formatTimeRange(eventItem.date, eventItem.start_time, eventItem.end_time))}</div>
                   <div>${escapeHTML([eventItem.address, eventItem.room].filter(Boolean).join(", "))}</div>
                 </div>
-              `).join("") : `<div class="mini-event">No events posted yet.</div>`}
+              `).join("") : `<div class="mini-event">No upcoming events yet</div>`}
             </div>
           </article>
         `).join("");
@@ -2856,7 +2807,12 @@
             if (!club?.nextEvent) return;
             downloadICS(club.nextEvent, club.clubName, button);
             try {
-              await updateEventDownloadCount(club.nextEvent);
+              const existingCount = club.nextEvent.download_count || 0;
+              await supabase
+                .from('events')
+                .update({ download_count: existingCount + 1 })
+                .eq('id', club.nextEvent.id);
+              club.nextEvent.download_count = existingCount + 1;
             } catch (error) {
               showToast("Downloaded", "The event downloaded, but analytics could not be updated.");
             }
@@ -2883,7 +2839,7 @@
         });
       }
 
-      function renderSchoolSuggestions(query, input, container, onSelect) {
+      async function renderSchoolSuggestions(query, input, container, onSelect) {
         const value = query.trim().toLowerCase();
         if (!value) {
           container.classList.remove("visible");
@@ -2892,7 +2848,24 @@
           return;
         }
 
-        const matches = schoolList.filter((school) => school.toLowerCase().includes(value)).slice(0, 10);
+        let matches = [];
+        try {
+          const { data, error } = await supabase
+            .from('clubs')
+            .select('school')
+            .eq('status', 'active');
+
+          if (error) throw error;
+
+          const uniqueSchools = [...new Set((data || []).map((row) => row.school).filter(Boolean))];
+          matches = uniqueSchools.filter((school) => school.toLowerCase().includes(value)).slice(0, 10);
+        } catch (error) {
+          container.classList.remove("visible");
+          container.innerHTML = "";
+          input.setAttribute("aria-expanded", "false");
+          return;
+        }
+
         if (!matches.length) {
           container.classList.remove("visible");
           container.innerHTML = "";
