@@ -1,4 +1,4 @@
-import { isSupabaseConfigured } from "./services/supabaseClient.js";
+import { isSupabaseConfigured, supabase } from "./services/supabaseClient.js";
 import { restoreSession } from "./services/authService.js";
 import { store } from "./state/store.js";
 import { UI, configureUI } from "./ui/ui.js";
@@ -12,6 +12,9 @@ const Dom = {
   tabPanels: [...document.querySelectorAll(".tab-panel")],
   navToggle: document.getElementById("nav-toggle"),
   navLinks: document.getElementById("nav-links"),
+  navSignupLinks: [...document.querySelectorAll('#nav-links [data-route="signup"]')],
+  navSigninLink: document.querySelector('#nav-links [data-route="signin"]'),
+  navLogoutBtn: document.getElementById("nav-logout"),
   toastRegion: document.getElementById("toast-region"),
   landingSchoolInput: document.getElementById("landing-school-search"),
   landingSuggestions: document.getElementById("landing-suggestions"),
@@ -143,11 +146,29 @@ const App = {
     Dom.googleCalendarLinkBtn.addEventListener("click", () => Actions.openGoogleFeed());
     Dom.appleCalendarLinkBtn.addEventListener("click", () => Actions.openAppleFeed());
     Dom.signoutBtn.addEventListener("click", () => Actions.handleSignOut());
+    Dom.navLogoutBtn.addEventListener("click", () => Actions.handleSignOut());
+  },
+
+  bindAuthState() {
+    UI.syncNavAuthState();
+    if (!isSupabaseConfigured()) return;
+
+    supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!session) {
+        store.clearAuth();
+        UI.syncNavAuthState();
+        return;
+      }
+
+      await restoreSession();
+      UI.syncNavAuthState();
+    });
   },
 
   async restoreSession() {
     if (!isSupabaseConfigured()) return;
     await restoreSession();
+    UI.syncNavAuthState();
     if (store.state.activeClub) {
       await UI.hydrateDashboard();
     }
@@ -171,6 +192,7 @@ const App = {
     this.bindDocumentEvents();
     this.bindForms();
     this.bindSettingsActions();
+    this.bindAuthState();
     this.hydrateInitialInputs();
     UI.updatePreview();
     UI.setTab("events");

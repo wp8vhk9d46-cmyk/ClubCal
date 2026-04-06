@@ -1,5 +1,6 @@
 export const SUPABASE_URL = "https://edcnllalkavncijrewno.supabase.co";
 export const SUPABASE_ANON_KEY = "sb_publishable_TGCM03zUEwuO7ibEXBWNfA_VJt-jHOC";
+export const SUPABASE_FUNCTIONS_BASE_URL = `${SUPABASE_URL}/functions/v1`;
 
 export const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 

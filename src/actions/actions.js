@@ -1,6 +1,6 @@
 import { signUpClub, signInClub, signOutClub, updateClubProfile } from "../services/authService.js";
 import { createEvent } from "../services/eventService.js";
-import { clearErrors, setError, getClubFeedUrl } from "../utils/helpers.js";
+import { clearErrors, setError, getClubFeedWebcalUrl } from "../utils/helpers.js";
 import { store } from "../state/store.js";
 import { UI } from "../ui/ui.js";
 import { showView } from "../router/router.js";
@@ -173,6 +173,7 @@ export const Actions = {
       await navigator.clipboard.writeText(Dom.calendarFeedUrlInput.value);
       const originalLabel = Dom.copyCalendarLinkBtn.textContent;
       Dom.copyCalendarLinkBtn.textContent = "Copied ✓";
+      UI.showToast("Calendar link copied", "Your club subscription link is ready to share.");
       setTimeout(() => {
         Dom.copyCalendarLinkBtn.textContent = originalLabel;
       }, 2000);
@@ -183,13 +184,13 @@ export const Actions = {
 
   openGoogleFeed() {
     if (!store.state.activeClub?.id) return;
-    const feedUrl = getClubFeedUrl(store.state.activeClub.id);
-    window.open(`https://calendar.google.com/calendar/r?cid=${encodeURIComponent(feedUrl)}`, "_blank", "noopener");
+    const webcalUrl = getClubFeedWebcalUrl(store.state.activeClub.id);
+    window.open(`https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcalUrl)}`, "_blank", "noopener");
   },
 
   openAppleFeed() {
     if (!store.state.activeClub?.id) return;
-    window.location.href = `webcal://clubcal.vercel.app/api/calendar/${store.state.activeClub.id}`;
+    window.location.href = getClubFeedWebcalUrl(store.state.activeClub.id);
   },
 
   async handleSignOut() {

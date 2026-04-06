@@ -1,7 +1,7 @@
 import { fetchPendingClubs, approveClub, rejectClub } from "../services/authService.js";
 import { fetchEventsForClub, fetchDiscoverySchools, fetchActiveClubsBySchool, deleteEvent, updateEventDownloadCount } from "../services/eventService.js";
 import { isSupabaseConfigured } from "../services/supabaseClient.js";
-import { escapeHTML, formatTimestamp, formatTimeRange, categoryClass, mapClub, mapEvent, getClubFeedUrl } from "../utils/helpers.js";
+import { escapeHTML, formatTimestamp, formatTimeRange, categoryClass, mapClub, mapEvent, getClubFeedUrl, getClubFeedWebcalUrl, toWebcalUrl } from "../utils/helpers.js";
 import { downloadICS } from "../utils/ics.js";
 import { store, STORAGE_KEYS } from "../state/store.js";
 import { showView } from "../router/router.js";
@@ -26,6 +26,22 @@ export const UI = {
   closeMobileNav() {
     Dom.navLinks.classList.remove("open");
     Dom.navToggle.setAttribute("aria-expanded", "false");
+  },
+
+  syncNavAuthState() {
+    const isLoggedIn = Boolean(store.state.authSession);
+
+    Dom.navSignupLinks.forEach((link) => {
+      link.hidden = isLoggedIn;
+    });
+
+    if (Dom.navSigninLink) {
+      Dom.navSigninLink.hidden = isLoggedIn;
+    }
+
+    if (Dom.navLogoutBtn) {
+      Dom.navLogoutBtn.hidden = !isLoggedIn;
+    }
   },
 
   ensureConfigured() {
@@ -72,13 +88,14 @@ export const UI = {
     Dom.settingsClubName.textContent = activeClub.clubName;
     Dom.settingsSchool.textContent = activeClub.school || "-";
     Dom.settingsEmail.textContent = activeClub.email;
-    Dom.calendarFeedUrlInput.value = getClubFeedUrl(activeClub.id);
+    Dom.calendarFeedUrlInput.value = getClubFeedWebcalUrl(activeClub.id);
     Dom.settingsClubNameInput.value = activeClub.clubName;
     Dom.settingsSchoolInput.value = activeClub.school || "";
     Dom.settingsEmailInput.value = activeClub.email;
     Dom.accountBadge.className = `badge ${dashboardStatus === "active" ? "active" : "pending"}`;
     Dom.accountBadge.textContent = dashboardStatus === "active" ? "Active" : "Pending";
 
+    this.syncNavAuthState();
     await this.renderEvents();
     this.renderInsights();
   },
@@ -351,13 +368,15 @@ export const UI = {
     Dom.clubGrid.querySelectorAll(".js-google-subscribe").forEach((button) => {
       button.addEventListener("click", () => {
         const feedUrl = getClubFeedUrl(button.dataset.id);
-        window.open(`https://calendar.google.com/calendar/r?cid=${encodeURIComponent(feedUrl)}`, "_blank", "noopener");
+        const webcalUrl = toWebcalUrl(feedUrl);
+        window.open(`https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcalUrl)}`, "_blank", "noopener");
       });
     });
 
     Dom.clubGrid.querySelectorAll(".js-apple-subscribe").forEach((button) => {
       button.addEventListener("click", () => {
-        window.location.href = `webcal://clubcal.vercel.app/api/calendar/${button.dataset.id}`;
+        const feedUrl = getClubFeedUrl(button.dataset.id);
+        window.location.href = toWebcalUrl(feedUrl);
       });
     });
 

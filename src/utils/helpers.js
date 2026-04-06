@@ -1,3 +1,5 @@
+import { SUPABASE_FUNCTIONS_BASE_URL } from "../services/supabaseClient.js";
+
 export function escapeICS(text) {
   return String(text || "")
     .replace(/\\/g, "\\\\")
@@ -16,7 +18,15 @@ export function escapeHTML(value) {
 }
 
 export function getClubFeedUrl(clubId) {
-  return `https://clubcal.vercel.app/api/calendar/${clubId}`;
+  return `${SUPABASE_FUNCTIONS_BASE_URL}/ical-feed?club=${encodeURIComponent(clubId)}`;
+}
+
+export function getClubFeedWebcalUrl(clubId) {
+  return toWebcalUrl(getClubFeedUrl(clubId));
+}
+
+export function toWebcalUrl(url) {
+  return String(url || "").replace(/^https:\/\//i, "webcal://");
 }
 
 export function clearErrors(scope) {
