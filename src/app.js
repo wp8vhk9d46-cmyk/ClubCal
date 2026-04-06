@@ -12,6 +12,7 @@ const Dom = {
   tabPanels: [...document.querySelectorAll(".tab-panel")],
   navToggle: document.getElementById("nav-toggle"),
   navLinks: document.getElementById("nav-links"),
+  navDashboardLink: document.getElementById("nav-dashboard-link"),
   navSignupLinks: [...document.querySelectorAll('#nav-links [data-route="signup"]')],
   navSigninLink: document.querySelector('#nav-links [data-route="signin"]'),
   navLogoutBtn: document.getElementById("nav-logout"),

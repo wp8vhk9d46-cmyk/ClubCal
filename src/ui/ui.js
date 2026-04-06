@@ -31,6 +31,10 @@ export const UI = {
   syncNavAuthState() {
     const isLoggedIn = Boolean(store.state.authSession);
 
+    if (Dom.navDashboardLink) {
+      Dom.navDashboardLink.hidden = !isLoggedIn;
+    }
+
     Dom.navSignupLinks.forEach((link) => {
       link.hidden = isLoggedIn;
     });
