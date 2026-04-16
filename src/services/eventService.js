@@ -39,6 +39,7 @@ export async function createEvent(payload) {
     .from("events")
     .insert({
       club_id: store.state.activeClub.id,
+      calendar_id: payload.calendarId || null,
       title: payload.title,
       date: payload.date,
       start_time: payload.startTime,

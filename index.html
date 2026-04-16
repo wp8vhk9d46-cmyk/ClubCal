@@ -925,6 +925,34 @@
       align-items: end;
     }
 
+    .calendar-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 12px;
+    }
+
+    .calendar-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .calendar-card-head strong {
+      font-size: 1rem;
+      color: var(--navy);
+    }
+
+    .btn-danger {
+      color: #c0392b;
+      border-color: #e8b4b0;
+    }
+
+    .btn-danger:hover {
+      background: #fdf0ef;
+    }
+
     .settings-calendar-actions .btn {
       min-height: 42px;
     }
@@ -1671,6 +1699,7 @@
             <div class="dashboard-tabs" role="tablist" aria-label="Club dashboard tabs">
               <button class="tab-btn active" type="button" data-tab="events">My Events</button>
               <button class="tab-btn" type="button" data-tab="create">Create Event</button>
+              <button class="tab-btn" type="button" data-tab="calendars">Calendars</button>
               <button class="tab-btn" type="button" data-tab="insights">Insights</button>
               <button class="tab-btn" type="button" data-tab="settings">Settings</button>
             </div>
@@ -1744,6 +1773,13 @@
                     </div>
                   </div>
                   <div class="field">
+                    <label for="event-calendar">Calendar <span class="label-note">(optional)</span></label>
+                    <select id="event-calendar" name="calendarId">
+                      <option value="">— No specific calendar —</option>
+                    </select>
+                    <div class="error" data-error-for="calendarId"></div>
+                  </div>
+                  <div class="field">
                     <label for="event-description">Description / Additional Details <span class="label-note">(optional)</span></label>
                     <textarea id="event-description" name="description"></textarea>
                     <div class="error" data-error-for="description"></div>
@@ -1768,6 +1804,29 @@
                     <div class="meta-line"><strong>RSVP</strong><span id="preview-rsvp">Optional RSVP link appears here.</span></div>
                   </div>
                 </aside>
+              </div>
+            </section>
+
+            <section class="tab-panel" data-tab-panel="calendars">
+              <div class="settings-card">
+                <div class="panel">
+                  <h3 class="settings-heading">Your Calendars</h3>
+                  <p class="muted">Create separate calendar feeds for different audiences — members only, e-board, specific sections, and more. Each calendar gets its own subscription link.</p>
+                  <form id="calendar-create-form" class="form" novalidate>
+                    <div class="field-row settings-calendar-row">
+                      <div class="field">
+                        <label for="calendar-name-input">Calendar Name</label>
+                        <input id="calendar-name-input" name="calendarName" type="text" placeholder="e.g. E-Board Only, All Members, Section A">
+                        <div class="error" data-error-for="calendarName"></div>
+                      </div>
+                      <div class="field">
+                        <label>&nbsp;</label>
+                        <button class="btn btn-primary" type="submit">Create Calendar</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div id="calendars-list"></div>
               </div>
             </section>
 

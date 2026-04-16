@@ -1,7 +1,8 @@
 import { fetchPendingClubs, approveClub, rejectClub } from "../services/authService.js";
 import { fetchEventsForClub, fetchDiscoverySchools, fetchActiveClubsBySchool, deleteEvent, updateEventDownloadCount } from "../services/eventService.js";
+import { fetchCalendarsForClub } from "../services/calendarService.js";
 import { isSupabaseConfigured } from "../services/supabaseClient.js";
-import { escapeHTML, formatTimestamp, formatTimeRange, categoryClass, mapClub, mapEvent, getClubFeedUrl, getClubFeedWebcalUrl, toWebcalUrl } from "../utils/helpers.js";
+import { escapeHTML, formatTimestamp, formatTimeRange, categoryClass, mapClub, mapEvent, getClubFeedUrl, getClubFeedWebcalUrl, getCalendarFeedUrl, getCalendarFeedWebcalUrl, toWebcalUrl } from "../utils/helpers.js";
 import { downloadICS } from "../utils/ics.js";
 import { store, STORAGE_KEYS } from "../state/store.js";
 import { showView } from "../router/router.js";
@@ -101,6 +102,7 @@ export const UI = {
 
     this.syncNavAuthState();
     await this.renderEvents();
+    await this.renderCalendars();
     this.renderInsights();
   },
 
@@ -175,6 +177,106 @@ export const UI = {
         }
       });
     });
+  },
+
+  async renderCalendars() {
+    const clubId = store.state.activeClub?.id;
+    if (!clubId) return;
+
+    try {
+      const calendars = await fetchCalendarsForClub(clubId);
+      store.setDashboardCalendars(calendars);
+    } catch (error) {
+      Dom.calendarsList.innerHTML = `<div class="empty-state">${escapeHTML(error.message)}</div>`;
+      return;
+    }
+
+    this.populateCalendarDropdown();
+
+    const calendars = store.state.dashboardCalendars;
+    if (!calendars.length) {
+      Dom.calendarsList.innerHTML = `<div class="empty-state">No calendars yet. Create one above to get started.</div>`;
+      return;
+    }
+
+    Dom.calendarsList.innerHTML = calendars.map((cal) => {
+      const feedUrl = getCalendarFeedWebcalUrl(clubId, cal.id);
+      const httpFeedUrl = getCalendarFeedUrl(clubId, cal.id);
+      return `
+        <div class="calendar-card">
+          <div class="calendar-card-head">
+            <strong>${escapeHTML(cal.name)}</strong>
+            <button class="btn btn-ghost btn-small btn-danger js-delete-calendar" data-id="${escapeHTML(cal.id)}">Delete</button>
+          </div>
+          <div class="form">
+            <div class="field-row settings-calendar-row">
+              <div class="field">
+                <label>Feed URL</label>
+                <input type="text" value="${escapeHTML(feedUrl)}" readonly>
+              </div>
+              <div class="field">
+                <label>&nbsp;</label>
+                <button class="btn btn-secondary js-copy-calendar-link" data-url="${escapeHTML(feedUrl)}">Copy Link</button>
+              </div>
+            </div>
+            <div class="settings-actions settings-calendar-actions">
+              <button class="btn btn-primary btn-small js-google-calendar" data-url="${escapeHTML(httpFeedUrl)}">Add to Google Calendar</button>
+              <button class="btn btn-ghost btn-small js-apple-calendar" data-url="${escapeHTML(feedUrl)}">Add to Apple Calendar</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    Dom.calendarsList.querySelectorAll(".js-delete-calendar").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        if (!confirm(`Delete "${calendars.find(c => c.id === btn.dataset.id)?.name}"? Events assigned to it will become unassigned.`)) return;
+        try {
+          const { deleteCalendar } = await import("../services/calendarService.js");
+          await deleteCalendar(btn.dataset.id);
+          await this.renderCalendars();
+          this.showToast("Calendar deleted", "The calendar and its feed link have been removed.");
+        } catch (error) {
+          this.showToast("Delete failed", error.message);
+        }
+      });
+    });
+
+    Dom.calendarsList.querySelectorAll(".js-copy-calendar-link").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(btn.dataset.url);
+          const original = btn.textContent;
+          btn.textContent = "Copied ✓";
+          this.showToast("Calendar link copied", "Share this link so others can subscribe.");
+          setTimeout(() => { btn.textContent = original; }, 2000);
+        } catch {
+          this.showToast("Copy failed", "Could not copy the link to your clipboard.");
+        }
+      });
+    });
+
+    Dom.calendarsList.querySelectorAll(".js-google-calendar").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        window.open(`https://calendar.google.com/calendar/r?cid=${encodeURIComponent(toWebcalUrl(btn.dataset.url))}`, "_blank", "noopener");
+      });
+    });
+
+    Dom.calendarsList.querySelectorAll(".js-apple-calendar").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        window.location.href = btn.dataset.url;
+      });
+    });
+  },
+
+  populateCalendarDropdown() {
+    const calendars = store.state.dashboardCalendars;
+    const select = Dom.eventCalendarSelect;
+    if (!select) return;
+    const current = select.value;
+    select.innerHTML = `<option value="">— No specific calendar —</option>` +
+      calendars.map((cal) => `<option value="${escapeHTML(cal.id)}">${escapeHTML(cal.name)}</option>`).join("");
+    if (current) select.value = current;
   },
 
   renderInsights() {
