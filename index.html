@@ -1630,6 +1630,22 @@
         align-items: start;
       }
     }
+
+    /* Dark mode overrides that must come after base styles */
+    [data-theme="dark"] .nav-link.cta {
+      background: var(--coral);
+      color: #ffffff;
+    }
+
+    [data-theme="dark"] .nav-link.cta:hover,
+    [data-theme="dark"] .nav-link.cta:focus-visible {
+      background: var(--coral-dark);
+    }
+
+    [data-theme="dark"] .intro-item {
+      background: #1e293b;
+      color: var(--text);
+    }
   </style>
 </head>
 <body>
