@@ -29,6 +29,10 @@ const Dom = {
   filterBar: document.getElementById("filter-bar"),
   signupForm: document.getElementById("signup-form"),
   signinForm: document.getElementById("signin-form"),
+  calendarCreateForm: document.getElementById("calendar-create-form"),
+  calendarNameInput: document.getElementById("calendar-name-input"),
+  calendarsList: document.getElementById("calendars-list"),
+  eventCalendarSelect: document.getElementById("event-calendar"),
   eventForm: document.getElementById("event-form"),
   settingsForm: document.getElementById("settings-form"),
   settingsReadView: document.getElementById("settings-read-view"),
@@ -136,6 +140,7 @@ const App = {
     Dom.signinForm.addEventListener("submit", (event) => Actions.handleSigninSubmit(event));
     Dom.eventForm.addEventListener("submit", (event) => Actions.handleEventSubmit(event));
     Dom.settingsForm.addEventListener("submit", (event) => Actions.handleSettingsSubmit(event));
+    Dom.calendarCreateForm.addEventListener("submit", (event) => Actions.handleCalendarCreateSubmit(event));
     Dom.eventForm.addEventListener("input", () => UI.updatePreview());
     Dom.eventForm.addEventListener("change", () => UI.updatePreview());
   },

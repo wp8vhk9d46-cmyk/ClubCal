@@ -1,5 +1,6 @@
 import { signUpClub, signInClub, signOutClub, updateClubProfile } from "../services/authService.js";
 import { createEvent } from "../services/eventService.js";
+import { createCalendar } from "../services/calendarService.js";
 import { clearErrors, setError, getClubFeedWebcalUrl } from "../utils/helpers.js";
 import { store } from "../state/store.js";
 import { UI } from "../ui/ui.js";
@@ -191,6 +192,26 @@ export const Actions = {
   openAppleFeed() {
     if (!store.state.activeClub?.id) return;
     window.location.href = getClubFeedWebcalUrl(store.state.activeClub.id);
+  },
+
+  async handleCalendarCreateSubmit(event) {
+    event.preventDefault();
+    clearErrors(Dom.calendarCreateForm);
+    const name = Dom.calendarNameInput.value.trim();
+
+    if (!name) {
+      setError(Dom.calendarCreateForm, "calendarName", "Please enter a calendar name.");
+      return;
+    }
+
+    try {
+      await createCalendar(name);
+      Dom.calendarNameInput.value = "";
+      await UI.renderCalendars();
+      UI.showToast("Calendar created", `"${name}" is ready. Share its feed link with your audience.`);
+    } catch (error) {
+      setError(Dom.calendarCreateForm, "calendarName", error.message);
+    }
   },
 
   async handleSignOut() {

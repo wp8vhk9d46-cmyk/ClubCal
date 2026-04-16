@@ -25,6 +25,14 @@ export function getClubFeedWebcalUrl(clubId) {
   return toWebcalUrl(getClubFeedUrl(clubId));
 }
 
+export function getCalendarFeedUrl(clubId, calendarId) {
+  return `${SUPABASE_FUNCTIONS_BASE_URL}/ical-feed?club=${encodeURIComponent(clubId)}&calendar=${encodeURIComponent(calendarId)}`;
+}
+
+export function getCalendarFeedWebcalUrl(clubId, calendarId) {
+  return toWebcalUrl(getCalendarFeedUrl(clubId, calendarId));
+}
+
 export function toWebcalUrl(url) {
   return String(url || "").replace(/^https:\/\//i, "webcal://");
 }
@@ -89,6 +97,7 @@ export function mapEvent(row) {
   return {
     id: row.id,
     club_id: row.club_id,
+    calendar_id: row.calendar_id || null,
     title: row.title,
     date: row.date,
     start_time: row.start_time,

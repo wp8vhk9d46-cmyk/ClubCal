@@ -14,6 +14,7 @@ export const store = {
     activeClub: null,
     authSession: null,
     dashboardEvents: [],
+    dashboardCalendars: [],
     dashboardStatus: ""
   },
 
@@ -52,10 +53,15 @@ export const store = {
     this.state.authSession = null;
     this.state.activeClub = null;
     this.state.dashboardEvents = [];
+    this.state.dashboardCalendars = [];
     this.state.dashboardStatus = "";
   },
 
   setDashboardEvents(events) {
     this.state.dashboardEvents = events;
+  },
+
+  setDashboardCalendars(calendars) {
+    this.state.dashboardCalendars = calendars;
   }
 };

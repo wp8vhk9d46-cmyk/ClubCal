@@ -5,6 +5,11 @@ type ClubRow = {
   club_name: string;
 };
 
+type CalendarRow = {
+  id: string;
+  name: string;
+};
+
 type EventRow = {
   id: string;
   club_id: string | null;
@@ -81,6 +86,7 @@ Deno.serve(async (request) => {
 
   const url = new URL(request.url);
   const clubId = url.searchParams.get("club");
+  const calendarId = url.searchParams.get("calendar") || null;
 
   if (!clubId) {
     return new Response("Missing club query parameter.", {
@@ -116,10 +122,35 @@ Deno.serve(async (request) => {
     });
   }
 
-  const { data: events, error: eventsError } = await supabase
+  let calendarName = club.club_name;
+
+  if (calendarId) {
+    const { data: calRow, error: calError } = await supabase
+      .from("calendars")
+      .select("id, name")
+      .eq("id", calendarId)
+      .eq("club_id", clubId)
+      .single<CalendarRow>();
+
+    if (calError || !calRow) {
+      return new Response("Calendar not found.", {
+        status: 404,
+        headers: { ...corsHeaders, "Content-Type": "text/plain; charset=utf-8" }
+      });
+    }
+    calendarName = `${club.club_name} — ${calRow.name}`;
+  }
+
+  let eventsQuery = supabase
     .from("events")
     .select("*")
     .eq("club_id", clubId);
+
+  if (calendarId) {
+    eventsQuery = eventsQuery.eq("calendar_id", calendarId);
+  }
+
+  const { data: events, error: eventsError } = await eventsQuery;
 
   if (eventsError) {
     return new Response(eventsError.message, {
@@ -134,12 +165,12 @@ Deno.serve(async (request) => {
     "PRODID:-//Club Cal//Club Calendar Feed//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
-    `X-WR-CALNAME:${escapeICS(club.club_name)}`,
-    `X-WR-CALDESC:${escapeICS(`Club Cal feed for ${club.club_name}`)}`,
+    `X-WR-CALNAME:${escapeICS(calendarName)}`,
+    `X-WR-CALDESC:${escapeICS(`Club Cal feed for ${calendarName}`)}`,
     ...((events || []) as EventRow[])
       .filter((eventItem) => shouldKeepInFeed(eventItem))
       .sort((a, b) => `${a.date}T${a.start_time}`.localeCompare(`${b.date}T${b.start_time}`))
-      .map((eventItem) => buildEventBlock(eventItem, club.club_name)),
+      .map((eventItem) => buildEventBlock(eventItem, calendarName)),
     "END:VCALENDAR"
   ].join("\r\n");
 
